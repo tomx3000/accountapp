@@ -1,0 +1,407 @@
+
+
+{%extends 'base.html'%}
+
+{%block style%}
+
+<style type="text/css">
+  
+  .go3d{  min-width:100px; 
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  text-align: center;
+  padding: 10px;}
+
+
+}
+</style>
+
+{%endblock%}
+
+{%block inputsearch%}
+
+ <div id="" class="container">
+    
+   <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-2  mr-0" href="#"> {{user.username}}</a>
+      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+      <ul class="navbar-nav px-3 col-2">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="/login/">Sign out</a>
+        </li>
+      </ul>
+    </nav>
+
+
+  </div>
+    {%endblock%}
+
+{%block content%}
+<div id="profile">
+
+ <div class="row" v-for="user in users">
+
+	<div class="col-lg-8 col-md-8 col-sm-12 col-12" style="margin-right: 20px;">
+
+  <ul class="list-group" >
+     <div class="row">
+   <li style="" class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('firstname')">
+        <div>
+        <h4  class="my-0" >  Firstname </h4>
+        <small class="text-muted" v-cloak v-if="!editfirstname">  [[user.first_name]]</small>
+         <small class="text-muted" v-if="editfirstname"><input type="text" name="" v-model="firstname" class="form-control">  </small>
+      </div>
+      <div>
+      <h4 class="my-0" v-cloak v-if="editfirstname"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,firstname,user.last_name,user.phonenumber,user.email,user.username,user.gender,user.birth_date,user.password,'firstname')">update</button> </h4>
+     
+        
+      </div>
+      
+  </li>
+
+           <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('lastname')">
+        <div>
+        <h4  class="my-0" >  Last Name </h4>
+        <small class="text-muted" v-cloak v-if="!editlastname"> [[user.last_name]] </small>
+        <small class="text-muted" v-if="editlastname"><input type="text" name="" class="form-control" v-model="lastname">  </small>
+      </div>
+      <div>
+      <h4 class="my-0" v-cloak v-if="editlastname"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,lastname,user.phonenumber,user.email,user.username,user.gender,user.birth_date,user.password,'lastname')">update</button> </h4>
+        
+      </div>
+      
+      
+  </li>
+
+     	
+     </div>
+
+<!-- row 2 -->
+          <div class="row" style="margin-top: 20px;">
+             <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('birthdate')">
+        <div>
+        <h4  class="my-0" >  Birthdate </h4>
+        <small class="text-muted" v-cloak v-if="!editbirthdate"> [[user.birth_date]] </small>
+        <small class="text-muted" v-if="editbirthdate"><input type="date" name="" class="form-control" v-model="birthdate">  </small>
+      </div>
+      <div>
+      <h4 class="my-0" v-cloak v-if="editbirthdate"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,user.last_name,user.phonenumber,user.email,user.username,user.gender,birthdate,user.password,'birthdate')">update</button> </h4>
+        
+      </div>
+      
+      
+  </li>
+   <li style="" class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('phone')">
+        <div>
+        <h4  class="my-0" >  Phone </h4>
+        <small class="text-muted" v-cloak v-if="!editphone"> [[user.phonenumber]] </small>
+        <small class="text-muted" v-if="editphone"><input type="text" name="" class="form-control" v-model="phone">  </small>
+      </div>
+      <div>
+      <h4 class="my-0" v-cloak v-if="editphone"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,user.last_name,phone,user.email,user.username,user.gender,user.birth_date,user.password,'phone')">update</button> </h4>
+        
+      </div>
+      
+      
+  </li>
+     	
+     </div>
+<!-- row -->
+               <div class="row" style="margin-top: 20px;">
+     	   <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('email')">
+        <div>
+        <h4  class="my-0" >  Email </h4>
+        <small class="text-muted" v-cloak v-if="!editemial"> [[user.email]] </small>
+        <small class="text-muted" v-if="editemial"><input type="text" name="" class="form-control" v-model="email">  </small>
+      </div>
+      <div>
+      <h4 class="my-0" v-cloak v-if="editemial"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,user.last_name,user.phonenumber,email,user.username,user.gender,user.birth_date,user.password,'email')">update</button> </h4>
+        
+      </div>
+      
+      
+  </li>
+   <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('gender')">
+        <div>
+        <h4  class="my-0" >  Gender </h4>
+        <small class="text-muted" v-cloak v-if="!editgender"> [[user.gender]] </small>
+        <small class="text-muted" v-if="editgender"><input type="text" name="" class="form-control" v-model="gender">  </small>
+      </div>
+      <div>
+      <h4 class="my-0" v-cloak v-if="editgender"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,user.last_name,user.phonenumber,user.email,user.username,gender,user.birth_date,user.password,'gender')">update</button> </h4>
+        
+      </div>
+      
+      
+  </li>
+     	
+     </div>
+
+               <div class="row" style="margin-top:20px; margin-bottom:20px; ">
+
+<!--    <li style="" class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" >
+        <div>
+        <h4  class="my-0" >  Access Level</h4>
+        <small class="text-muted" v-cloak> [[employee.employee_privillage]] </small>
+      </div>
+      <div>
+      <h4 class="my-0">  </h4>
+      <small class="text-muted">  </small>
+        
+      </div>
+      
+      
+  </li> -->
+     	
+     </div>
+
+
+
+
+</ul> 
+
+  
+</div>	
+<div class="col-lg-3 col-md-3 col-sm-12 col-12"  v-on:dblclick="closeEditInput()">
+<div class="list-group" >
+  <div  class="list-group-item list-group-item-action flex-column align-items-start ">
+    <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-1"></h5>
+      <small v-cloak>[[user.username]]</small>
+    </div>
+    <p class="mb-1" >Username  </p>
+<!--     <p class="text-danger" v-cloak>[[error]]</p>
+ -->    <small v-on:click="change('username')" v-if="!editusername">change</small>
+  
+
+
+<div class="input-group mb-3" v-if="editusername">
+  <input type="text" class="form-control" placeholder="username" aria-label="username" aria-describedby="basic-addon2" v-model="username">
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary" type="button" v-if="editusername" v-on:click="updateUsername(user.id,username)">Update</button>
+  </div>
+</div>
+<br><br>
+    <p class="mb-1" >Password</p>
+<!--     <p class="text-danger" v-cloak>[[passerror]]</p>
+ -->    <small v-on:click="change('password')" v-if="!editpassword">change</small>
+    <!-- old password -->
+   	<div class="input-group input-group-sm mb-3" >
+  <div class="input-group-prepend" v-if="editpassword">
+    <span class="input-group-text" id="inputGroup-sizing-sm">old</span>
+  </div>
+  <input type="password" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"  v-model="oldpassword" v-if="editpassword">
+</div>
+<!-- end old password -->
+   <!-- new1 password -->
+   	<div class="input-group input-group-sm mb-3" >
+  <div class="input-group-prepend" v-if="editpassword">
+    <span class="input-group-text" id="inputGroup-sizing-sm">new</span>
+  </div>
+  <input type="password" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"  v-model="newpassword_one" v-if="editpassword">
+</div>
+<!-- end new1 password -->
+   <!-- new2 password -->
+   	<div class="input-group input-group-sm mb-3" >
+  <div class="input-group-prepend" v-if="editpassword">
+    <span class="input-group-text" id="inputGroup-sizing-sm">new</span>
+  </div>
+  <input type="password" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"  v-model="newpassword_two" v-if="editpassword">
+</div>
+<!-- end new2 password -->
+    <button v-if="editpassword" v-on:click="updatePassword(user.id,oldpassword,newpassword_one,newpassword_two,user.username)" class="btn btn-outline-secondary" type="button">uodate</button>
+  </div>
+
+</div>
+</div>
+</div>
+
+
+</div>
+{%endblock%}
+
+{%block script%}
+
+  <script >
+  new Vue({
+  	delimiters: ['[[', ']]'],
+  el: '#profile',
+  data:{
+  	profile:'welcome',
+  	usernameedit:false,
+  	editfirstname:false,
+  	editlastname:false,
+  	editphone:false,
+  	editemial:false,
+  	editaddress:false,
+  	editusername:false,
+  	editpassword:false,
+    editgender:false,
+    editbirthdate:false,
+  	username:'',
+  	firstname:'',
+  	secondname:'',
+  	lastname:'',
+  	phone:'',
+  	gender:'',
+  	email:'',
+  	birthdate:'',
+  	position:'',
+  	employees:'',
+  	password:'',
+  	users:'',
+  	oldpassword:'',
+  	newpassword_one:'',
+  	newpassword_two:'',
+  	error:'',
+  	passerror:'',
+    user:'',
+  },methods:{
+  	
+  	updateUser:function(id,firstname,lastname,phone,email,username,gender,birthdate,password,editstate){
+  			   // updating editing item
+        this.$http.put('/api/user/'+id+'/',{'first_name':firstname,'last_name':lastname,'phonenumber':phone,'email':email,'username':username,'gender':gender,'birth_date':birthdate,'password':password
+        })
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+        // $.notify(this.title,'info');
+        if(editstate=='firstname')this.editfirstname=false;
+        else if(editstate=='lastname')this.editlastname=false;
+        else if(editstate=='gender')this.editgender=false;
+        else if(editstate=='email')this.editemial=false;
+        else if(editstate=='birthdate')this.editbirthdate=false;
+        else if(editstate=='phone')this.editphone=false;
+  
+
+        this.getUser()
+
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+  	},
+  	enableEdit:function(editstate){
+  		if(editstate=='firstname')this.editfirstname=!this.editfirstname;
+        else if(editstate=='lastname')this.editlastname=!this.editlastname;
+        else if(editstate=='gender')this.editgender=!this.editgender;
+        else if(editstate=='email')this.editemial=!this.editemial;
+        else if(editstate=='birthdate')this.editbirthdate=!this.editbirthdate;
+        else if(editstate=='phone')this.editphone=!this.editphone;
+  	},
+  	change:function(editstate){
+  		if('username'==editstate)this.editusername=true;
+  		else if('password'==editstate)this.editpassword=true;
+  	},closeEditInput:function(){
+  		this.editpassword=false;
+  		this.editusername=false;
+  		this.username='';
+  		this.oldpassword='';
+        this.newpassword_two='';
+        this.newpassword_one='';
+  	}
+  	,
+    getUser:function(){
+    	this.$http.get('/api/user')
+     .then(function(response){
+      this.users=response.data
+      
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+    },
+    editProfileEnable:function(str){
+    	alert(str)
+    	if(str=='username'){
+    		this.usernameedit = true;
+
+    	}
+
+    },updateUsername(id,username){
+    	// alert(id)
+    	// alert(username)
+     this.$http.put('/username/'+id+'/'+username+'/',{'username':username
+        })
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+        if(this.title == 'bad'){this.error=this.username+' exits, Try different username';
+        $.notify(this.error,'error');
+    }
+        else{
+
+        	this.error='';
+        	this.editusername=false;
+        	$.notify('successfuly changed username','success');
+        	// info == blue
+        	// success == green
+        	// error == red
+        	// warn == yellow
+        }
+        this.username='';
+        
+        // $.notify('succe');
+        this.getUser()
+        
+
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+
+    },updatePassword(id,oldpass,newo,newt,username){
+    	// alert(id)
+    	// alert(username)
+     this.$http.put('/userpass/'+id+'/'+oldpass+'/'+newo+'/'+newt+'/'+username+'/',{'password':newo
+        })
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+
+        if(this.title == 'badold'){
+        	
+        	this.passerror='wrong old password'
+        	// this.oldpassword='';
+        	$.notify(this.passerror,'error');
+        }
+        else if (this.title == 'notmatched'){
+        	this.passerror='unmatched new passwords'
+        	// this.newpassword_two='';
+        	// this.newpassword_one='';
+        	$.notify(this.passerror,'error');
+        }
+
+        else{
+        this.editpassword=false;
+        this.passerror='';
+        $.notify('successfuly changed password','success');
+		
+
+        
+        
+        }
+        this.oldpassword='';
+        this.newpassword_two='';
+        this.newpassword_one='';
+
+        
+        
+        
+
+
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+
+    }
+
+    
+  },beforeMount(){
+	this.getUser()
+  }
+  })
+
+
+  </script>
+{%endblock%}

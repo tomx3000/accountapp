@@ -1,0 +1,451 @@
+
+
+{%extends 'base.html'%}
+
+{%block style%}
+<style type="text/css">
+	    :root {
+  --input-padding-x: .75rem;
+  --input-padding-y: .75rem;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+/*body {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}*/
+
+.form-signin {
+  width: 100%;
+  max-width: 420px;
+  padding: 15px;
+  margin: auto;
+}
+
+.form-label-group {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.form-label-group > input,
+.form-label-group > label {
+  padding: var(--input-padding-y) var(--input-padding-x);
+}
+
+.form-label-group > label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  margin-bottom: 0; /* Override default `<label>` margin */
+  line-height: 1.5;
+  color: #495057;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+  transition: all .1s ease-in-out;
+}
+
+.form-label-group input::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input:-ms-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::-ms-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::-moz-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::placeholder {
+  color: transparent;
+}
+
+.form-label-group input:not(:placeholder-shown) {
+  padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
+  padding-bottom: calc(var(--input-padding-y) / 3);
+}
+
+.form-label-group input:not(:placeholder-shown) ~ label {
+  padding-top: calc(var(--input-padding-y) / 3);
+  padding-bottom: calc(var(--input-padding-y) / 3);
+  font-size: 12px;
+  color: #777;
+}
+
+  .go3d{  min-width:100px; 
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  text-align: center;
+  padding: 10px;}
+
+
+}
+
+
+</style>
+{%endblock%}
+{%block inputsearch%}
+
+    <div id="searchexpense" class="container">
+    
+   <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-2  mr-0" href="#"> {{user.username}}</a>
+      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+      <ul class="navbar-nav px-3 col-2">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="/login/">Sign out</a>
+        </li>
+      </ul>
+    </nav>
+
+
+  </div>
+    {%endblock%}
+
+{%block content%}
+<div id='creditapp'>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" id="search">
+	<h1 v-cloak >Total: [[getTotalCredit()]] </h1>
+<span v-cloak class="go3d" v-if="showbusiness" v-on:click="onShowBusiness()">[[selected_business]]</span>
+
+<div class="dropdown pull-right selectbuz" v-if="!showbusiness">
+      <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span data-feather="calendar" v-cloak></span>
+                     Business
+      </button>
+
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <span v-on:click="onShowBusiness()"><a class="dropdown-item" href="#" v-on:click="filterAccounts('','All')" >All </a></span>
+      <span v-on:click="onShowBusiness()"v-for="business in businesses">
+
+         <a class="dropdown-item" href="#" v-on:click="filterAccounts(account.id,business.business_name)" v-for ="account in accounts" v-if="account.business == business.id">[[business.business_name]] </a>
+      </span>
+     
+       
+      </div>
+      </div>
+
+	
+</div>
+
+
+
+<div class="row">
+<div class="col-lg-8 col-md-8 col-sm-12 col-12">
+             <form class="form-signin" v-on:submit="checkSubmitExpense">
+    {% csrf_token %}
+
+      <div class="form-label-group">
+        <input type="text" id="inputexpensename" class="form-control" placeholder=" Spent On"  required autofocus v-model="expensename">
+        <label for="inputexpensename">Spent On </label>
+      </div>
+
+      <div class="form-label-group">
+        <input type="text" id="inputexpensereceiver" class="form-control" placeholder="Received Payment"   autofocus v-model="expensereceiver">
+        <label for="inputexpensereceiver">Received Payment </label>
+      </div>
+
+    <div class="form-label-group">
+        <input type="number" id="inputexpenseamount" class="form-control" placeholder=" Amount Spent"   autofocus v-model="expenseamount">
+        <label for="inputexpenseamount">Amount Spent </label>
+      </div>
+
+      <button v-bind:class="{'btn':true,'btn-lg':true,'btn-block':true,'btn-outline-primary':(button_create_edit_expense=='New Expense'),'btn-outline-dark':(button_create_edit_expense!='New Expense')}" type="submit" v-cloak>[[button_create_edit_expense]]</button>
+      <!-- <p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2018</p> -->
+    </form>
+  
+</div>
+<div class="col-lg-4 col-md-4 col-sm-12 col-12" >
+
+<!-- new -->
+
+<div  style="margin-bottom: 20px;">
+  <ul class="list-group" >
+  <li class="list-group-item d-flex justify-content-between lh-condensed">
+      <div>
+   
+        <h4  class="" v-cloak><!-- [[customer.customer_name]] --> Expenses</h4>
+        
+      </div>
+      <div>
+
+      <h4 class="text-muted align-right" v-cloak> <!--  [[customer_total_order(customer)]] -->[[getTotalCredit()]]</h4>
+        
+      </div>
+  </li>
+
+</ul> 
+<div >
+
+   <ul class="list-group">
+
+      <li class="list-group-item d-flex justify-content-between lh-condensed" v-for="expense in expenses"  v-cloak v-on:dblclick="editExpense(expense.id,expense.account,expense.credit_reason,expense.credit_to,expense.credit_amount,expense.credit_type)" v-cloak>
+                <div class="container">
+                  <h6  class="my-0" v-cloak>[[expense.credit_to]] </h6>
+                  <small class="text-muted" v-cloak> [[expense.credit_reason]] </small>
+                </div>
+                <div class="container" v-cloak v-if="selected_business=='All' && expense.account == account.id" v-for="account in accounts">
+      <span v-for="business in businesses" v-if="account.business==business.id">[[business.business_name]]</span></div>
+                <div class="co">
+                <span v-cloak class="text-muted" >Tsh [[expense.credit_amount]] </span>
+
+                <br>
+                <!-- <span aria-hidden="true"  v-if="customer.id == sale.customer" v-cloak>[[customer.customer_name]]</span> -->
+                <button type="button" class="close" aria-label="Close" v-on:click="deleteExpenses(expense.id)">
+
+                <span aria-hidden="true">&times;</span>
+          </button>
+         
+                  
+                </div>
+                
+              </li>
+
+   </ul>
+
+</div>
+  
+
+</div>
+
+<!-- end new -->
+
+  
+</div>
+  
+
+</div>
+
+
+
+
+</div>
+{%endblock%}
+
+{%block script%}
+  <script >
+
+wm = new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#searchexpense',
+  data:{
+    searchfileditem:'',
+    title:''
+  }
+  ,methods:{
+    getExpense:function(){
+     //  let api_url='/api/expense';
+     //  if(this.searchfiledexpense!==''||this.searchfiledexpense!==null){
+     //    api_url='/api/expense/?search='+this.searchfiledexpense;
+     //  }
+
+     // this.$http.get(api_url)
+     // .then(function(response){
+
+     //  vmex.expenses=response.data
+     //  // this.alertOnMininumIrem(this.items)
+     // })
+     // .catch(function(error){
+     //  this.title='error getting items'
+     // })
+    },
+
+  }
+
+})
+
+ vmex=new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#creditapp',
+  data:{
+  	expense:'Cash Book',
+  	expenseamount:'',
+  	expensedescription:'',
+  	expensereceiver:'',
+  	expensename:'',
+  	expenses:'',
+  	button_create_edit_expense:'New Expense',
+  	edit:false,
+  	currentexpenseid:'',
+	accountamount:'',
+	adjusted_val_tobeupdate:'',
+  businesses:'',
+selected_business:'All',
+accounts:'',
+businesses:'',
+useraccount:'',
+showbusiness:true,
+
+
+  },
+  methods:{
+     filterAccounts:function(val,businesname){
+      this.useraccount=val
+      this.selected_business=businesname
+      this.getExpenses()
+    },
+    onShowBusiness:function(){
+      this.showbusiness=!this.showbusiness
+    },
+    filterBusinessExpenses:function(expenses){
+      useraccount=this.useraccount
+      newsale = expenses.filter(function(expense){
+        return expense.account==useraccount
+        
+      })
+      return newsale
+    },
+    getTotalCredit:function(){
+      var amount=0;
+     $.each(this.expenses, function(key, value) {
+           
+            amount+=value.credit_amount
+             
+         });
+     
+     amount = 'Tsh' + amount.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+     return amount;
+    },
+  	parseDate:function(date){
+  		
+  		return moment(date).format('LL')
+
+  	},
+  	checkSubmitExpense:function(e){
+
+  		
+  			if(this.edit){
+        // updating editing item
+       
+       this.$http.put('/api/creditaccount/'+this.currentexpenseid+'/',{'credit_reason':this.expensename,'credit_to':this.expensereceiver,'credit_amount':this.expenseamount,'account':this.useraccount})
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+        this.edit=false;
+		this.expensereceiver='';
+		this.expensedescription='';
+		this.expenseamount='';
+    this.expensename='';
+
+
+         this.getExpenses();
+        
+         this.button_create_edit_expense="New Expense";
+       })
+       .catch(function(error){
+        this.title='error getting expenses'
+       })
+        
+
+       
+
+      }  else{
+   
+
+  			this.$http.post('/api/creditaccount/',{'credit_reason':this.expensename,'credit_to':this.expensereceiver,'credit_amount':this.expenseamount,'account':this.useraccount})
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+         // this.getSales()
+         this.expensename='';
+	     	this.expensereceiver='';
+	    	this.expensedescription='';
+	    	this.expenseamount='';
+         this.getExpenses();
+
+        // alert('response')
+       })
+       .catch(function(error){
+        this.title='error getting expenses'
+       })
+
+
+  		
+
+  		}
+
+  		        
+        
+      e.preventDefault();
+  	},getExpenses:function(){
+     this.$http.get('/api/creditaccount')
+     .then(function(response){
+      this.expenses=response.data
+       if(this.selected_business!="All")
+      this.expenses=this.filterBusinessExpenses(this.expenses)
+     })
+     .catch(function(error){
+      this.title='error getting expenses'
+     })
+    },getAccount:function(){
+     this.$http.get('/api/account')
+     .then(function(response){
+      this.accounts=response.data
+
+     })
+     .catch(function(error){
+      this.title='error getting expenses'
+     })
+    },
+    getBusiness:function(){
+     this.$http.get('/api/business')
+     .then(function(response){
+      this.businesses=response.data
+
+     })
+     .catch(function(error){
+      this.title='error getting expenses'
+     })
+    },
+    editExpense:function(id,account,expensename,expensereceiver,expenseamount,expensedescription){
+    	
+         this.button_create_edit_expense="Edit Expense";
+         this.currentexpenseid=id;
+         this.edit=true ;
+         this.expensename=expensename;
+         this.expensereceiver=expensereceiver;
+         this.expenseamount=expenseamount;
+         this.expensedescription=expensedescription;
+         this.useraccount=account
+    	
+         
+    },
+    deleteExpenses:function(id){
+      this.$http.delete('/api/creditaccount/'+id+'/')
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+
+        this.getExpenses()
+        // alert('response')
+       })
+       .catch(function(error){
+        this.title='error deleting expenses'
+       })
+
+    }
+
+  },beforeMount(){
+  	this.getExpenses()
+  	this.getAccount()
+    this.getBusiness()
+  }
+
+})
+
+  </script>
+{%endblock%}

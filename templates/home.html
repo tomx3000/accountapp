@@ -1,0 +1,592 @@
+
+
+{%extends 'base.html'%}
+
+{%block style%}
+<!-- {% load static %}
+<link rel="stylesheet" href="{% static "css/floating-labels.css" %}" /> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style type="text/css">
+
+    :root {
+  --input-padding-x: .75rem;
+  --input-padding-y: .75rem;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+/*body {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}*/
+
+.form-signin {
+  width: 100%;
+  max-width: 420px;
+  padding: 15px;
+  margin: auto;
+}
+
+.form-label-group {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.form-label-group > input,
+.form-label-group > label {
+  padding: var(--input-padding-y) var(--input-padding-x);
+}
+
+.form-label-group > label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  margin-bottom: 0; /* Override default `<label>` margin */
+  line-height: 1.5;
+  color: #495057;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+  transition: all .1s ease-in-out;
+}
+
+.form-label-group input::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input:-ms-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::-ms-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::-moz-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::placeholder {
+  color: transparent;
+}
+
+.form-label-group input:not(:placeholder-shown) {
+  padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
+  padding-bottom: calc(var(--input-padding-y) / 3);
+}
+
+.form-label-group input:not(:placeholder-shown) ~ label {
+  padding-top: calc(var(--input-padding-y) / 3);
+  padding-bottom: calc(var(--input-padding-y) / 3);
+  font-size: 12px;
+  color: #777;
+}
+
+
+ .go3d{  min-width:100px; 
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  text-align: center;
+  padding: 10px;}
+
+</style>
+{%endblock%}
+{%block inputsearch%}
+
+   <div id="searchsales" class="container">
+    
+   <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-2  mr-0" href="#"> {{user.username}}</a>
+      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+      <ul class="navbar-nav px-3 col-2">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="/login/">Sign out</a>
+        </li>
+      </ul>
+    </nav>
+
+
+  </div>
+    {%endblock%}
+
+
+{%block content%}
+
+<div id=debittaccount class="container" >
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" id="search">
+  <h1 v-cloak v-if="isGrossprofit" >Gross Profit: [[ number_to_Cash(getProfiLoss()) ]]</h1>
+  <h1 v-cloak v-if="!isGrossprofit" >Gross Loss: [[ number_to_Cash(getProfiLoss()) ]]</h1>
+
+  <h1 v-cloak v-if="isNetprofit" >Net Profit: [[number_to_Cash(getProfiLoss(false)) ]]</h1>
+
+ <h1 v-cloak v-if="!isNetprofit" >Net Loss: [[ number_to_Cash(getProfiLoss(false)) ]]</h1>
+
+    <span v-cloak class="go3d" v-if="showbusiness" v-on:click="onShowBusiness()">[[selected_business]]</span>
+
+   <div class="dropdown pull-right selectbuz" v-if="!showbusiness">
+      <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span data-feather="calendar" v-cloak></span>
+                     Business
+      </button>
+
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <span v-on:click="onShowBusiness()"><a class="dropdown-item" href="#" v-on:click="filterAccounts('','All')" >All </a></span>
+      <span v-on:click="onShowBusiness()"v-for="business in businesses">
+
+         <a class="dropdown-item" href="#" v-on:click="filterAccounts(account.id,business.business_name)" v-for ="account in accounts" v-if="account.business == business.id">[[business.business_name]] </a>
+      </span>
+     
+       
+      </div>
+      </div>
+  
+</div>
+<div class='row' >
+ <!-- begin Expenses -->
+<div class='col-lg-4 col-md-4 col-sm-12 col-12' style="margin-top: 20px; max-height: 800px;
+  overflow-y: auto;
+  overflow-x: auto;">
+
+<div  style="margin-bottom: 20px;">
+  <ul class="list-group" >
+  <li class="list-group-item d-flex justify-content-between lh-condensed">
+      <div>
+   
+        <h4  class="" v-cloak><!-- [[customer.customer_name]] --> Expenses </h4>
+        
+      </div>
+      <div>
+
+      <h4 class="text-muted align-right" v-cloak> <!--  [[customer_total_order(customer)]] -->[[getTotalCredit()]]</h4>
+        
+      </div>
+  </li>
+
+</ul> 
+<div >
+
+   <ul class="list-group">
+
+      <li class="list-group-item d-flex justify-content-between lh-condensed" v-for= "expense in expenses"    v-cloak>
+              <div>
+                  <h6  class="my-0" v-cloak>[[expense.credit_to]] </h6>
+                  <small class="text-muted" v-cloak> [[expense.credit_reason]] </small>
+                </div>
+                <div>
+                <span v-cloak class="text-muted" >Tsh [[expense.credit_amount]] </span>
+
+                <br>
+                <!-- <span aria-hidden="true"  v-if="customer.id == sale.customer" v-cloak>[[customer.customer_name]]</span> -->
+                <button type="button" class="close" aria-label="Close" v-on:click="deleteExpenses(expense.id)">
+
+                <span aria-hidden="true">&times;</span>
+          </button>
+         
+                  
+                </div>
+                
+              </li>
+
+   </ul>
+
+</div>
+    
+  
+</div>
+
+</div>
+
+<!-- end Expenses -->
+
+<!-- begin order -->
+<div class='col-lg-4 col-md-4 col-sm-12 col-12' style="margin-top: 20px; max-height: 800px;
+  overflow-y: auto;
+  overflow-x: auto;">
+
+<div  style="margin-bottom: 20px;">
+  <ul class="list-group" >
+  <li class="list-group-item d-flex justify-content-between lh-condensed">
+      <div>
+   
+        <h4  class="" v-cloak><!-- [[customer.customer_name]] -->  Pending Sales</h4>
+        
+      </div>
+      <div>
+
+      <h4 class="text-muted align-right" v-cloak> <!--  [[customer_total_order(customer)]] -->[[getTotalCreditSales()]]</h4>
+        
+      </div>
+  </li>
+
+</ul> 
+<div >
+
+   <ul class="list-group">
+
+      <li class="list-group-item d-flex justify-content-between lh-condensed" v-for= "sale in sales"  v-if="sale.debit_credit"  v-cloak>
+                <div>
+                  <h6  class="my-0" v-cloak>[[sale.debit_from]] </h6>
+                  <small class="text-muted" v-cloak> [[sale.debit_reason]] </small>
+                </div>
+                <div>
+                <span v-cloak class="text-muted" >Tsh [[sale.debit_amount]] </span>
+
+                <br>
+                <!-- <span aria-hidden="true"  v-if="customer.id == sale.customer" v-cloak>[[customer.customer_name]]</span> -->
+                <button type="button" class="close" aria-label="Close" v-on:click="deleteSale(sale.id)">
+
+                <span aria-hidden="true">&times;</span>
+          </button>
+         
+                </div>
+                
+              </li>
+
+   </ul>
+
+</div>
+    
+  
+<!--  <button style="margin-top: 10px;" v-on:click="acceptSale(sale.id)" class='btn btn-outline-primary btn-small'>Accept</button>
+  <button v-on:click="declineSale(sale.id)" style="margin-top: 10px;" class='btn btn-outline-dark btn-small'>Decline</button> -->
+
+</div>
+
+</div>
+
+<!-- end order -->
+
+
+<!-- begin order -->
+<div class='col-lg-4 col-md-4 col-sm-12 col-12' style="margin-top: 20px; max-height: 800px;
+  overflow-y: auto;
+  overflow-x: auto;">
+
+<div  style="margin-bottom: 20px;">
+  <ul class="list-group" >
+  <li class="list-group-item d-flex justify-content-between lh-condensed">
+      <div>
+   
+        <h4  class="" v-cloak><!-- [[customer.customer_name]] --> Actual Sales</h4>
+        
+      </div>
+      <div>
+
+      <h4 class="text-muted align-right" v-cloak> <!--  [[customer_total_order(customer)]] -->[[getTotalCreditSales(false)]]</h4>
+        
+      </div>
+  </li>
+
+</ul> 
+<div >
+
+   <ul class="list-group">
+
+      <li class="list-group-item d-flex justify-content-between lh-condensed" v-for= "sale in sales"  v-if="!sale.debit_credit"  v-cloak>
+                <div>
+                  <h6  class="my-0" v-cloak>[[sale.debit_from]] </h6>
+                  <small class="text-muted" v-cloak> [[sale.debit_reason]] </small>
+                </div>
+                <div>
+                <span v-cloak class="text-muted" >Tsh [[sale.debit_amount]] </span>
+
+                <br>
+                <!-- <span aria-hidden="true"  v-if="customer.id == sale.customer" v-cloak>[[customer.customer_name]]</span> -->
+                <button type="button" class="close" aria-label="Close" v-on:click="deleteSale(sale.id)">
+
+                <span aria-hidden="true">&times;</span>
+          </button>
+                  
+                </div>
+                
+              </li>
+
+   </ul>
+
+</div>
+    
+  
+<!--  <button style="margin-top: 10px;" v-on:click="acceptSale(sale.id)" class='btn btn-outline-primary btn-small'>Accept</button>
+  <button v-on:click="declineSale(sale.id)" style="margin-top: 10px;" class='btn btn-outline-dark btn-small'>Decline</button> -->
+
+</div>
+
+</div>
+
+<!-- end order -->
+
+</div>
+
+</div>
+
+
+
+{%endblock%}
+
+{%block script%}
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/moment.min.js"></script>
+ <script>
+    moment().format();
+</script>
+<script type="text/javascript">
+  // $.notify('order')
+
+</script>
+  <script >
+
+
+
+
+vsale=new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#debittaccount',
+  data: {
+    customername:'',
+salesamount:'',
+saledescription:'',
+sales:'',
+totalsale:0,
+useraccount:'',
+salestype:'cash',
+edit:false,
+saleid:'',
+new_edit_button:'New Sale',
+accounts:'',
+number_of_accounts:'',
+profit:"Profit",
+expenses:'',
+isGrossprofit:true,
+isNetprofit:true,
+total_expenses:0,
+credit_sales:0,
+actual_sales:0,
+totalsales:0,
+selected_business:'All',
+businesses:'',
+showbusiness:true,
+  },
+
+  methods:{
+    // to be changed such that it is used to dispaly  all or a certain debit account
+    // and another function which will use the default account fields in the db shall be used foe debit entries
+    filterAccounts:function(val,businesname){
+      this.useraccount=val
+      this.selected_business=businesname
+      this.getExpenses()
+      this.getSales()
+    },
+    filterBusiness:function(expenses){
+      useraccount=this.useraccount
+      newsale = expenses.filter(function(expense){
+        return expense.account==useraccount
+        
+      })
+      return newsale
+    },
+    onShowBusiness:function(){
+      this.showbusiness=!this.showbusiness
+    },
+     getAccount:function(){
+     this.$http.get('/api/account')
+     .then(function(response){
+      this.accounts=response.data
+      count=0
+      $.each(this.accounts, function(key, value) {
+           count+=1;
+         });
+      this.number_of_accounts=count
+      
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+    },
+    getProfiLoss:function(gross=true){
+       this.totalsales=this.credit_sales+this.actual_sales
+      
+      // profit /loss with sales on loan
+      if(this.totalsales>=this.total_expenses)this.isGrossprofit=true
+      else if(this.totalsales<this.total_expenses)this.isGrossprofit=false
+     
+     // profit/loss with sale without loans
+      if(this.actual_sales>=this.total_expenses)this.isNetprofit=true
+      else if(this.actual_sales<this.total_expenses)this.isNetprofit=false
+
+      if(gross && this.isGrossprofit )return this.totalsales-this.total_expenses
+      else if(gross && !this.isGrossprofit )return this.total_expenses-this.totalsales
+      else if(!gross && this.isNetprofit )return this.actual_sales-this.total_expenses
+      else if(!gross && !this.isNetprofit )return this.total_expenses-this.actual_sales
+
+
+    },
+    deleteExpenses:function(id){
+      this.$http.delete('/api/creditaccount/'+id+'/')
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+
+        this.getExpenses()
+        // alert('response')
+       })
+       .catch(function(error){
+        this.title='error deleting expenses'
+       })
+
+    },
+    getTotalCredit:function(){
+      var amount=0;
+     $.each(this.expenses, function(key, value) {
+           
+            amount+=value.credit_amount
+             
+         });
+     this.total_expenses=amount
+     
+      return this.number_to_Cash(amount,'Tsh')
+
+    },
+    getSales:function(){
+      this.$http.get('/api/debitaccount')
+     .then(function(response){
+      this.sales=response.data
+      if(this.selected_business!="All")
+      this.sales=this.filterBusiness(this.sales)
+
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+
+    },
+    getBusiness:function(){
+     this.$http.get('/api/business')
+     .then(function(response){
+      this.businesses=response.data      
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+    },
+    getExpenses:function(){
+      this.$http.get('/api/creditaccount')
+     .then(function(response){
+      this.expenses=response.data
+      if(this.selected_business!="All")
+      this.expenses=this.filterBusiness(this.expenses)
+
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+
+    },
+    parseDate:function(date){
+
+    return moment(date).format('LLLL');
+
+    },
+    number_to_Cash:function(number,currency="Tsh"){
+
+       amount = currency + number.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+     return amount;
+
+    },
+    getTotalSales:function(now=false){
+      var amount=0;
+     if(!now){
+      $.each(this.sales, function(key, value) {
+           if(!value.debit_credit ){
+            amount+=value.debit_amount
+             }
+         });
+
+     } else{
+      $.each(this.sales, function(key, value) {
+            amount+=value.debit_amount
+             
+         });
+
+     }
+     
+     
+    return this.number_to_Cash(amount,'Tsh')
+    },
+    getTotalCreditSales:function(credit=true){
+      var amount=0;
+
+     $.each(this.sales, function(key, value) {
+           if(value.debit_credit && credit ){
+            amount+=value.debit_amount
+             }else if(!value.debit_credit && !credit){
+              amount+=value.debit_amount
+             }
+         });
+
+     if(credit)this.credit_sales=amount
+     else this.actual_sales=amount
+     
+    return this.number_to_Cash(amount,'Tsh')
+
+    },
+
+
+    editSales:function(id,customername,amount,reason){
+      this.saleid=id;
+      this.customername=customername;
+        this.salesamount=amount;
+        this.saledescription=reason;
+        this.edit=true;
+        this.new_edit_button="Edit Sale"
+    },
+    deleteSale:function(id){
+      this.$http.delete('/api/debitaccount/'+id+'/')
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+        this.getSales()
+        // alert('response')
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+    },
+    acceptSale:function(id){
+        this.$http.post('/debitaccount/'+id+'/',{'id':id})
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+        this.getSales()
+
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+
+    },
+    declineSale:function(id){
+
+
+    },
+    },
+
+    beforeMount(){
+
+    this.getSales()
+    this.getAccount()
+    this.getExpenses()
+    this.getBusiness()
+
+    }
+  }
+)
+  </script>
+{%endblock%}

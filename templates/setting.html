@@ -1,0 +1,540 @@
+
+
+{%extends 'base.html'%}
+
+{%block style%}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style type="text/css">
+	[v-cloak]{
+		display: none;
+	}
+</style>
+{%endblock%}
+{%block inputsearch%}
+
+ <div id="" class="container">
+    
+   <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-2  mr-0" href="#"> {{user.username}}</a>
+      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+      <ul class="navbar-nav px-3 col-2">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="/login/">Sign out</a>
+        </li>
+      </ul>
+    </nav>
+
+
+  </div>
+    {%endblock%}
+
+{%block content%}
+
+<div id="settings">
+
+<!-- Demo $$$$$$$$$$$$$$$$$$$$$$$-->
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Are You Sure </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body ">
+      	<p v-cloak>Deleteing [[nametobedeleted]] will erase all traces </p>
+        
+
+      </div>
+      <div class="modal-footer">
+   <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal" v-on:click="deleteEmployee()" >Yes</button>
+        <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal" v-on:click="stopDelete()">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- end demo $$$$$$$$$$$$$$$$$$$$$$$$$$$$ -->
+
+
+	<h1 v-cloak>[[settings]]</h1>
+
+<div class="list-group container">
+  <div href="#" class="list-group-item list-group-item-action flex-column align-items-start " style="margin-top: 20px">
+    <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-1">Business</h5>
+      <small><button v-on:click="checkSubmitCompanyForm" type="submit" class="btn btn-outline-primary btn-sm" v-cloak>[[company_add_edit_button]]</button></small>
+    </div>
+    <p class="mb-1">
+    	<form >
+    	{%csrf_token%}
+  <div class="form-row align-items-center">
+    <div class="col-sm-3 my-1">
+      <label class="sr-only" for="inlineFormInputCopanyName">BusinessName</label>
+      <input type="text" class="form-control" id="inlineFormInputCompanyName" placeholder="Name"  v-model="companyname">
+    </div>
+    <div class="col-sm-3 my-1">
+      <label class="sr-only" for="inlineFormInputGroupCompanyEmail">Email</label>
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <div class="input-group-text">@</div>
+        </div>
+        <input type="text" class="form-control" id="inlineFormInputGroupCompanyEmail" placeholder="Email"  v-model="companyemail">
+      </div>
+    </div>
+    <div class="col-sm-3 my-1">
+      <label class="sr-only" for="inlineFormInputCompanyPhone">Phone</label>
+      <input type="text" class="form-control" id="inlineFormInputCompanyPhone" placeholder="Phone"  v-model="companyphone">
+    </div>
+    <div class="col-sm-3 my-1">
+      <label class="sr-only" for="inlineFormInputCompanyAddress">Address</label>
+      <input type="text" class="form-control" id="inlineFormInputCompanyAddress" placeholder="Address"  v-model="companyaddress">
+    </div>
+    <div class="col-sm-3 my-1">
+      <label class="sr-only" for="inlineFormInputCompanyNature">Nature</label>
+      <input type="text" class="form-control" id="inlineFormInputCompanyNature" placeholder="Nature"  v-model="companynature">
+    </div>
+    
+  </div>
+</form>
+
+    </p>
+
+   <small class="text-muted">
+    	  <ul class="list-group">
+     
+   <li class="list-group-item d-flex justify-content-between lh-condensed" v-for="comp in company" v-cloak v-on:dblclick="editCompany(comp.id,comp.business_name,comp.business_location,comp.business_email,comp.business_phone,comp.business_nature)" style="overflow: auto;">
+        <div class="container">
+        <h4  class="my-0" v-cloak>  [[comp.business_name]] </h4>
+       <small class="text-muted" v-cloak> [[parseDate(comp.created_at)]] </small>
+
+      </div class="container">
+      <div>
+      <h4 class="my-0" v-cloak> [[comp.business_phone]] </h4>
+     <small class="text-muted" v-cloak> [[comp.business_email]] </small>
+
+        
+      </div>
+
+       <div class="container">
+      <h4 class="my-0" v-cloak> [[comp.business_nature]] </h4>
+      <small class="text-muted" v-cloak> [[comp.business_location]] </small>
+        
+      </div>
+      
+      
+  </li>
+
+</ul>
+    </small>
+      
+      
+  </li>
+
+</ul>
+
+  </div>
+  <!-- end business -->
+  <!-- begin store -->
+
+  <!-- end store -->
+  <div href="#" class="list-group-item list-group-item-action flex-column align-items-start" style="margin-top: 20px">
+    <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-1">Account</h5>
+      <small class="text-muted">
+      <button type="submit" class="btn btn-outline-primary btn-sm" v-on:click="checkSubmitAccountForm">Update</button></small>
+    </div>
+       <p class="mb-1">    	
+    <form>
+  <div class="form-row align-items-center">
+    <div class="col-sm-3 my-1">
+      <label class="sr-only" for="inlineFormInputAccountName">Name</label>
+      <input type="text" class="form-control" id="inlineFormInputAccountName" placeholder="Name" v-model="accountname">
+    </div>
+ <!--    <div class="col-sm-3 my-1">
+      <label class="sr-only" for="inlineFormInputGroupAccountBalance" >Balance</label>
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <div class="input-group-text">#</div>
+        </div>
+        <input type="text" class="form-control" id="inlineFormInputGroupAccountBalance" placeholder="Balance" v-model="accountbalance">
+      </div>
+    </div> -->
+        
+  </div>
+</form></p>
+    <small class="text-muted">
+    	  <ul class="list-group">
+     
+   <li class="list-group-item d-flex justify-content-between lh-condensed" v-cloak v-for="acc in account" v-on:dblclick="editAccount(acc.business,acc.id,acc.account_name,acc.account_balance)" style="overflow: auto;">
+        <div>
+        <h4  class="my-0" v-cloak >  [[acc.account_name]] </h4>
+<!--         <small class="text-muted" > Quantity </small>
+ -->      </div>
+      <div>
+      <h4 class="my-0" v-cloak> [[acc.account_balance]] </h4>
+<!--       <small class="text-muted"> Price </small>
+ -->        
+      </div>
+      
+      
+  </li>
+
+</ul>
+    </small>
+  </div>
+<!-- begin employee -->
+
+<!-- end employee -->
+
+</div>
+
+
+
+</div>
+
+{%endblock%}
+
+{%block script%}
+  <script >
+new Vue({
+	delimiters: ['[[', ']]'],
+  el: '#settings',
+  data:{
+  	settings:"",
+  	editstore:false,
+  	editaccount:false,
+  	editemployee:false,
+    editcompany:false,
+  	companyname:'',
+  	companyaddress:'',
+  	companyemail:'',
+  	companyphone:'',
+  	storename:'',
+  	storeemail:'',
+  	storephone:'',
+  	storeaddress:'',
+  	accountname:'',
+  	accountbalance:'',
+  	employeeusername:'',
+  	emplpyeepassword:'',
+  	employeefirstname:'',
+  	employeephone:'',
+  	employees:'',
+  	employeeid:'',
+  	employeeuser:'',
+	employeeprivillage:'',
+	employeeposition:'',
+	addemployeebutton:'Add',
+  company_add_edit_button:'Add',
+  	stores:'',
+  	user:'',
+  	companyid:1,
+  	storeid:'',
+  	company:'',
+  	account:'',
+  	accountid:'',
+  	addstorebutton:'Add',
+  	storecompanyid:1,
+  	currentuserid:'',
+  	tobedeleted:'',
+  	nametobedeleted:'',
+    companynature:'',
+    userid:'{{user.id}}'
+  	  },
+  methods:{
+    parseDate:function(date){
+
+    return moment(date).format('LLLL');
+
+    },
+
+  	// company control code
+  	checkSubmitCompanyForm:function(e){  
+      if(this.editcompany){
+        // updating editing item
+        this.$http.put('/api/business/'+this.companyid+'/',{'business_name':this.companyname,'business_phone':this.companyphone,'business_location':this.companyaddress,'business_email':this.companyemail,'business_nature':this.companynature,'user':this.userid})
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+    	this.companyaddress='';
+    	this.companyemail='';
+    	this.companyname='';
+    	this.companyphone='';
+      this.editcompany=false;
+      this.company_add_edit_button='Add'
+      this.companynature='';
+    	this.getCompany();
+
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+        
+      }  else{
+        this.$http.post('/api/business/',{'business_name':this.companyname,'business_phone':this.companyphone,'business_location':this.companyaddress,'business_email':this.companyemail,'business_nature':this.companynature,'user':this.userid})
+       .then(function(response){
+        // title is the return company object after creation
+        this.title=response.data
+        this.createAccount_f0r_business(this.title)
+      this.companyaddress='';
+      this.companyemail='';
+      this.companyname='';
+      this.companyphone='';
+      this.companynature='';
+
+        	this.getCompany()
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+
+      }         
+        
+      e.preventDefault();
+    },
+    prepDelete:function(id,name){
+    this.tobedeleted=id
+    this.nametobedeleted=name
+    },
+    stopDelete:function(){
+    // alert(this.tobedeleted+' :'+this.nametobedeleted)
+    this.tobedeleted=''
+    this.nametobedeleted=''
+    },
+    getCompany:function(){
+     this.$http.get('/api/business')
+     .then(function(response){
+      this.company=response.data      
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+    },
+    editCompany:function(id,name,address,email,phone,nature){
+    	this.companyid=id;
+    	this.companyaddress=address;
+    	this.companyemail=email;
+    	this.companyname=name;
+    	this.companyphone=phone;
+      this.companynature=nature
+      this.editcompany=true;
+      this.company_add_edit_button='Update'      
+    }
+    // end company control code
+    
+    // begin account control code
+    // #########################
+	// #########################
+    // #########################
+    // #########################
+    // #########################
+    // #########################
+    ,
+    checkSubmitAccountForm:function(e){  
+        // updating editing item
+        this.$http.put('/api/account/'+this.accountid+'/',{'account_name':this.accountname,'business':this.companyid,'account_balance':this.accountbalance})
+       .then(function(response){
+        // this.items=response.data
+      this.title=response.data
+    	this.accountname='';
+    	this.accountbalance='';
+    	this.getAccount();
+
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+            
+      e.preventDefault();
+    },
+    createAccount_f0r_business:function(business){
+      this.$http.post('/api/account/',{'account_name':business.business_name,'business':business.id,'account_balance':0})
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+      this.getAccount();
+        
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+    },
+    getAccount:function(){
+     this.$http.get('/api/account')
+     .then(function(response){
+      this.account=response.data
+      
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+    },
+    editAccount:function(companyid,id,name,amount){
+    	this.companyid=companyid;
+    	this.accountid=id;
+    	this.accountname=name;
+    	this.accountbalance=amount;    	
+
+    }
+    // not yet implemmented
+    ,
+      deleteAccount:function(id){
+    	 this.$http.delete('/api/account/'+id+'/')
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+        this.getAccount()
+        // alert('response')
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+
+    }
+
+    // end account control code
+
+    // begin employee control code
+    // ###########################
+    // ###########################
+    // ###########################
+    // ###########################
+    // ###########################
+    // ###########################
+    // ###########################
+    // ###########################
+    // ###########################
+       ,
+    checkSubmitEmployeeForm:function(e){  
+      if(this.editemployee){
+        // updating editing item
+        this.$http.put('/api/employee/'+this.employeeid+'/',{'employee_privillage':this.employeeprivillage,'employee_position':this.employeeposition,'employee_firstname':this.employeefirstname,'employee_phone':this.employeephone,'company':this.employecompany,'user':this.employeeuser})
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+        this.employeeid='';
+    	this.employeeprivillage='';
+    	this.employeeposition='';
+    	this.employeefirstname='';
+    	this.editemployee=false;
+    	this.employeephone='';
+    	this.addemployeebutton='Add';
+    	this.employeeuser='';
+    	this.employecompany='';
+    	this.getEmployee();
+
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+        
+      }  else{
+      	$.notify('Adding Employee','info');
+        this.$http.post('/api/employee/',{'company':this.companyid,'employee_position':this.employeeposition,'employee_privillage':this.employeeprivillage,'employee_firstname':this.employeefirstname,'employee_phone':this.employeephone})
+
+
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+        this.employeeuser='';
+        this.employeeid='';
+    	this.employeeprivillage='';
+    	this.employeefirstname='';
+    	this.employeeposition='';
+    	this.employeephone='';
+    	this.employecompany='';
+    	$.notify('Employee Added','success');
+    	this.getEmployee();
+        
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+
+      }         
+        
+      e.preventDefault();
+    },passwordReset:function(id){
+    	$.notify('reseting password','info');
+    	this.$http.get('/resetpass/'+id+'/')
+     .then(function(response){
+      this.title=response.data
+      $.notify('password reset complete','success');
+      
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+    }
+    ,
+    getEmployee:function(){
+     this.$http.get('/api/employee')
+     .then(function(response){
+      this.employees=response.data
+      
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+    },
+    editEmployee:function(id,firstname,privillage,position,phone,company,user){
+    	this.employeeid=id;
+    	this.employeefirstname=firstname;
+    	this.employeeprivillage=privillage;
+    	this.employeeposition=position;
+    	this.employeephone=phone;
+    	this.employecompany=company;
+    	this.employeeuser=user;
+    	this.addemployeebutton="Edit";
+    	this.editemployee=true;
+    },
+    deleteEmployee:function(){
+    	id=this.tobedeleted
+    	 this.$http.delete('/api/employee/'+id+'/')
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+        this.tobedeleted=''
+        this.nametobedeleted=''
+        this.getEmployee()
+        // alert('response')
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+
+    },
+    toStringPriviilage:function(priv){
+    	if(priv==3){
+    		return "sales";
+    	}else if(priv == 1){
+    		return "admin";
+    	}else if(priv == 2){
+    		return "assistant"
+
+    	}else if(priv == 4){
+    		return "bursar"
+    		
+    	}else if(priv == 5){
+    		return "godown";
+    	}
+
+    }
+
+    // end employee control code
+
+  }
+  ,
+    beforeMount(){
+      this.getCompany()
+      this.getAccount()
+    }
+})
+
+  </script>
+{%endblock%}
