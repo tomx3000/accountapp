@@ -289,6 +289,8 @@ accounts:'',
 businesses:'',
 useraccount:'',
 showbusiness:true,
+number_of_accounts:'',
+userid:'{{user.id}}',
 
 
   },
@@ -328,17 +330,44 @@ showbusiness:true,
   	checkSubmitExpense:function(e){
 
   		
-  			if(this.edit){
-        // updating editing item
-       
-       this.$http.put('/api/creditaccount/'+this.currentexpenseid+'/',{'credit_reason':this.expensename,'credit_to':this.expensereceiver,'credit_amount':this.expenseamount,'account':this.useraccount})
+  			if(!this.edit){
+        if(this.useraccount==""){
+          if(this.number_of_accounts>=1)
+            $.notify("select an business","error")
+            else{
+        $.notify("business not yet created","error")
+        $.notify("Go to settings \n to create business","info")
+
+            }
+        }else{
+
+        this.$http.post('/api/creditaccount/',{'credit_reason':this.expensename,'credit_to':this.expensereceiver,'credit_amount':this.expenseamount,'account':this.useraccount,'user':this.userid})
+       .then(function(response){
+        // this.items=response.data
+        this.title=response.data
+         // this.getSales()
+         this.expensename='';
+        this.expensereceiver='';
+        this.expensedescription='';
+        this.expenseamount='';
+         this.getExpenses();
+
+        // alert('response')
+       })
+       .catch(function(error){
+        this.title='error getting expenses'
+       })
+
+     }
+   }else{
+    this.$http.put('/api/creditaccount/'+this.currentexpenseid+'/',{'credit_reason':this.expensename,'credit_to':this.expensereceiver,'credit_amount':this.expenseamount,'account':this.useraccount,'user':this.userid})
        .then(function(response){
         // this.items=response.data
         this.title=response.data
         this.edit=false;
-		this.expensereceiver='';
-		this.expensedescription='';
-		this.expenseamount='';
+    this.expensereceiver='';
+    this.expensedescription='';
+    this.expenseamount='';
     this.expensename='';
 
 
@@ -350,35 +379,8 @@ showbusiness:true,
         this.title='error getting expenses'
        })
         
-
+   }
        
-
-      }  else{
-   
-
-  			this.$http.post('/api/creditaccount/',{'credit_reason':this.expensename,'credit_to':this.expensereceiver,'credit_amount':this.expenseamount,'account':this.useraccount})
-       .then(function(response){
-        // this.items=response.data
-        this.title=response.data
-         // this.getSales()
-         this.expensename='';
-	     	this.expensereceiver='';
-	    	this.expensedescription='';
-	    	this.expenseamount='';
-         this.getExpenses();
-
-        // alert('response')
-       })
-       .catch(function(error){
-        this.title='error getting expenses'
-       })
-
-
-  		
-
-  		}
-
-  		        
         
       e.preventDefault();
   	},getExpenses:function(){
@@ -395,6 +397,11 @@ showbusiness:true,
      this.$http.get('/api/account')
      .then(function(response){
       this.accounts=response.data
+      count=0
+      $.each(this.accounts, function(key, value) {
+           count+=1;
+         });
+      this.number_of_accounts=count
 
      })
      .catch(function(error){

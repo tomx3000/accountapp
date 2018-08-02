@@ -2,14 +2,15 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import render,get_object_or_404,redirect
 from django.http import HttpResponse,HttpResponseRedirect
-from .models import Business,Account,DebitAccount,CreditAccount,User
+from .models import Business,Account,DebitAccount,CreditAccount,User,Ownership
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 
 from django.http import JsonResponse
 
 
-from .serializers import UserSerializer,AccountSerializer,CreditAccountSerializer,DebitAccountSerializer,BusinessSerializer
+from .serializers import UserSerializer,AccountSerializer,CreditAccountSerializer,DebitAccountSerializer,BusinessSerializer,OwnershipSerializer
+from django.db.models import Q
 # Create your views here.
 
 @login_required(login_url='/login/')
@@ -56,6 +57,30 @@ def LoginUser(request,*args,**kargs):
 		return render(request,'login.html')	
 
 
+@csrf_exempt
+@login_required(login_url='/login/')
+def checkOwnership(request,*args,**kargs):
+	print('reached check ownership')
+	user=User.objects.get(id=kargs['userid'])
+	business=Business.objects.get(id=kargs['businesid'])
+	qs=Ownership.objects.filter(user=user,business=business)
+	if(qs.count()>=1):
+		print('ok')
+		return HttpResponse('ok')
+	else:
+		print('not okay')
+		return HttpResponse('not okay')
+
+@csrf_exempt
+@login_required(login_url='/login/')
+def RemoveOwnership(request,*args,**kargs):
+	user=User.objects.get(id=kargs['userid'])
+	business=Business.objects.get(id=kargs['businesid'])
+	Ownership.objects.filter(user=user,business=business).delete()
+	
+	return HttpResponse('ok')
+		
+
 
 @csrf_exempt
 @login_required(login_url='/login/')
@@ -66,19 +91,36 @@ def getUser(request,*args,**kargs):
 
 @csrf_exempt
 @login_required(login_url='/login/')
+def getMyUsers(request,*args,**kargs):
+	qs=User.objects.filter(created_by=request.user)
+	serializer=UserSerializer(qs,many=True)
+	return JsonResponse(serializer.data,safe=False)
+
+
+@csrf_exempt
+@login_required(login_url='/login/')
+def getMyUsersBuz(request,*args,**kargs):
+	qs=Ownership.objects.filter(Q(user__created_by=request.user)|Q(user=request.user))
+	serializer=OwnershipSerializer(qs,many=True)
+	return JsonResponse(serializer.data,safe=False)
+
+
+@csrf_exempt
+@login_required(login_url='/login/')
 def getBusiness(request,*args,**kargs):
 	user=User.objects.get(id=kargs['id'])
-	qs=Business.objects.filter(user=user)
+	qs=Business.objects.filter(owners=user)
 	serializer=BusinessSerializer(qs,many=True)
 
 	return JsonResponse(serializer.data,safe=False)
 	
 
+
 @csrf_exempt
 @login_required(login_url='/login/')
 def getCredit(request,*args,**kargs):
 	user=User.objects.get(id=kargs['id'])
-	qs=CreditAccount.objects.filter(account__business__user=user)
+	qs=CreditAccount.objects.filter(account__business__owners=user)
 	serializer=CreditAccountSerializer(qs,many=True)
 
 	return JsonResponse(serializer.data,safe=False)
@@ -87,7 +129,7 @@ def getCredit(request,*args,**kargs):
 @login_required(login_url='/login/')
 def getDebit(request,*args,**kargs):
 	user=User.objects.get(id=kargs['id'])
-	qs=DebitAccount.objects.filter(account__business__user=user)
+	qs=DebitAccount.objects.filter(account__business__owners=user)
 	serializer=DebitAccountSerializer(qs,many=True)
 	return JsonResponse(serializer.data,safe=False)
 
@@ -96,7 +138,7 @@ def getDebit(request,*args,**kargs):
 @login_required(login_url='/login/')
 def getAccount(request,*args,**kargs):
 	user=User.objects.get(id=kargs['id'])
-	qs=Account.objects.filter(business__user=user)
+	qs=Account.objects.filter(business__owners=user)
 	serializer=AccountSerializer(qs,many=True)
 
 	return JsonResponse(serializer.data,safe=False)
@@ -166,7 +208,7 @@ def SettingsPage(request,*args,**kargs):
 def AcceptDebit(request,*args,**kargs):
 
 	sale=DebitAccount.objects.filter(id=kargs['id'])
-	updatesale=sale.update(debit_credit=False)
+	updatesale=sale.update(debit_credit=False,user=request.user)
 	# print(request.POST)
 	return HttpResponse('ok')
 
@@ -185,18 +227,20 @@ def RegisterUser(request,*args,**kargs):
 	if kargs['firstpassword'] == kargs['secondpassword']:	
 		password=kargs['firstpassword']
 	else:
-		return HttpResponse('notmatched')
+		return HttpResponse('badpasswords')
 
 	username = kargs['username']
 
 	email=username+'@gmail.com'
-	user = User.objects.create_user(username, email, password)
+	try:
 
-	if(user):
-		return HttpResponse('ok')
+		user = User.objects.create_user(username, email, password)
+	except Exception as e:
+		return HttpResponse('badusername')
 
 	else:
-		return HttpResponse('try onother username')
+		return HttpResponse('ok')
+		
 	
 # print(request.POST)
 	

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 
 # Create your models here.
 class User(AbstractUser):
@@ -11,6 +12,12 @@ class User(AbstractUser):
     # default_credit_account=models.IntegerField(null=True, blank=True)
     admin=models.BooleanField(default=False)
     privillage=models.IntegerField(default=1)
+    created_by=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,null=True,blank=True)
+    created_at=models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    updated_at=models.DateTimeField(auto_now=True,null=True,blank=True)
+
+	
+	
 
     def __str__(self):
     	return str(self.id)+":"+str(self.username)
@@ -19,9 +26,8 @@ class User(AbstractUser):
     	ordering=('-id',)
     
 
-		
 class Business(models.Model):
-	user=models.ForeignKey(User,on_delete=models.CASCADE)
+	owners=models.ManyToManyField(User,through='Ownership')
 	business_name=models.CharField(max_length=40,)
 	business_location=models.CharField(max_length=40,null=True,blank=True)
 	business_phone=models.CharField(max_length=20,)
@@ -34,7 +40,14 @@ class Business(models.Model):
 	def __str__(self):
 		return str(self.id)+": "+str(self.business_name)
 
-	
+class Ownership(models.Model):
+	business=models.ForeignKey(Business,on_delete=models.CASCADE)
+	user=models.ForeignKey(User,on_delete=models.CASCADE)
+	created_at=models.DateTimeField(auto_now_add=True,null=True,blank=True)
+	updated_at=models.DateTimeField(auto_now=True,null=True,blank=True)
+
+	def __str__(self):
+		return str(self.business.business_name)+": "+str(self.user.username)
 
 class Account(models.Model):
 	business=models.ForeignKey(Business,on_delete=models.CASCADE)
@@ -47,7 +60,6 @@ class Account(models.Model):
 	def __str__(self):
 		return str(self.id)+": "+str(self.account_name)
 	
-
 	def save(self,*args,**kargs):
 		print('Saving Account')
 		if self.account_balance is None or '':
@@ -65,6 +77,7 @@ class DebitAccountManager(models.Manager):
 # received cash
 class DebitAccount(models.Model):
 	account=models.ForeignKey(Account,on_delete=models.CASCADE)
+	user=models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)
 	debit_from=models.CharField(max_length=40,)
 	debit_amount=models.FloatField(max_length=40,default=0.0)	
 	debit_reason=models.CharField(max_length=40,null=True,blank=True,)
@@ -102,6 +115,7 @@ class DebitAccount(models.Model):
 # spentcash
 class CreditAccount(models.Model):
 	account=models.ForeignKey(Account,on_delete=models.CASCADE)
+	user=models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)
 	credit_to=models.CharField(max_length=40,)
 	credit_amount=models.FloatField(max_length=40,default=0.0)	
 	credit_reason=models.CharField(max_length=40,null=True,blank=True,)
@@ -116,7 +130,7 @@ class CreditAccount(models.Model):
 
 
 	def __str__(self):
-		return str(self.id)+": "+str(self.account_name)
+		return str(self.id)+": "+str(self.account.account_name)
 	
 
 	

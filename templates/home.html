@@ -123,12 +123,12 @@ body {
 
 <div id=debittaccount class="container" >
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" id="search">
-  <h1 v-cloak v-if="isGrossprofit" >Gross Profit: [[ number_to_Cash(getProfiLoss()) ]]</h1>
-  <h1 v-cloak v-if="!isGrossprofit" >Gross Loss: [[ number_to_Cash(getProfiLoss()) ]]</h1>
+  <h1 v-cloak v-if="isGrossprofit" >Gross Profit: <br> [[ number_to_Cash(getProfiLoss()) ]]</h1>
+  <h1 v-cloak v-if="!isGrossprofit" >Gross Loss: <br>[[ number_to_Cash(getProfiLoss()) ]]</h1>
 
-  <h1 v-cloak v-if="isNetprofit" >Net Profit: [[number_to_Cash(getProfiLoss(false)) ]]</h1>
+  <h1 v-cloak v-if="isNetprofit" >Net Profit:<br> [[number_to_Cash(getProfiLoss(false)) ]]</h1>
 
- <h1 v-cloak v-if="!isNetprofit" >Net Loss: [[ number_to_Cash(getProfiLoss(false)) ]]</h1>
+ <h1 v-cloak v-if="!isNetprofit" >Net Loss:<br> [[ number_to_Cash(getProfiLoss(false)) ]]</h1>
 
     <span v-cloak class="go3d" v-if="showbusiness" v-on:click="onShowBusiness()">[[selected_business]]</span>
 

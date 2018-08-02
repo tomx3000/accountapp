@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from django.urls import  path,include
 
-from .views import Home,LoginUser,ExpensePage,ProfilePage,BusinessPage,SettingsPage,AcceptDebit,RegisterUser,ChangeUsername,ChangePassword,SalesPage,Clients,getUser,getBusiness,getCredit,getDebit,getAccount
+from .views import Home,LoginUser,ExpensePage,ProfilePage,BusinessPage,SettingsPage,AcceptDebit,RegisterUser,ChangeUsername,ChangePassword,SalesPage,Clients,getUser,getBusiness,getCredit,getDebit,getAccount,getMyUsers,checkOwnership,RemoveOwnership,getMyUsersBuz
 
 
 urlpatterns = [
@@ -30,13 +30,18 @@ path('userpass/<slug:id>/<slug:oldpassword>/<slug:firstnewpassword>/<slug:second
 
 path('clients/', Clients,name='clients'),
 
-
 # get models for that user
 path('get/user/', getUser,name='getuser'),
 path('get/business/<slug:id>/', getBusiness,name='getbusiness'),
 path('get/credit/<slug:id>/', getCredit,name='getcredit'),
 path('get/debit/<slug:id>/', getDebit,name='getdebit'),
 path('get/account/<slug:id>/', getAccount,name='getaccount'),
+path('get/myusers', getMyUsers,name='myusers'),
+path('checkownership/<slug:userid>/<slug:businesid>/', checkOwnership,name='chekownership'),
+path('removeownership/<slug:userid>/<slug:businesid>/', RemoveOwnership,name='removeownership'),
+path('get/myusers/buz/', getMyUsersBuz,name='myusersbuz'),
+
+
 
 
 ]

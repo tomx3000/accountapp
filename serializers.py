@@ -1,7 +1,11 @@
 from rest_framework import serializers
-from .models import Business,Account,DebitAccount,CreditAccount,User
+from .models import Business,Account,DebitAccount,CreditAccount,User,Ownership
 # from django.contrib.auth.models import User 
-
+class OwnershipSerializer(serializers.ModelSerializer):
+	class Meta:
+		model =Ownership
+		fields ="__all__"
+		
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model =User

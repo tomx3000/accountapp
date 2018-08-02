@@ -187,7 +187,97 @@
 </ul>
     </small>
   </div>
+
 <!-- begin employee -->
+   <div href="#" class="list-group-item list-group-item-action flex-column align-items-start" style="margin-top: 20px">
+    <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-1">Partners</h5>
+      <small class="text-muted"><button type="submit" v-bind:class="{'btn':true,'btn-sm':true,'btn-block':true,'btn-outline-primary':(addemployeebutton=='Add'),'btn-outline-dark':(addemployeebutton!='Add')}" v-cloak v-on:click="checkSubmitEmployeeForm">[[addemployeebutton]]</button></small>
+    </div>
+    <p class="mb-1">      
+    <form>
+  <div class="form-row align-items-center">
+    <div class="col-sm-3 my-1">
+      <label class="sr-only" for="inlineFormInputEmployeeFirstname">firstname</label>
+      <input type="text" class="form-control" id="inlineFormInputEmployeeFirstname" placeholder="firstname" v-model="employeefirstname">
+    </div>
+    <div class="col-sm-3 my-1">
+      <label class="sr-only" for="inlineFormInputGroupEmployeePhone">phone</label>        
+        <input type="text" class="form-control" id="inlineFormInputGroupEmployeePhone" placeholder="phone" v-model="employeephone">
+    </div>
+
+    <!-- new selection priv -->
+    <div class="input-group col-sm-3">
+    <div class="input-group-prepend">
+      <label class="input-group-text" for="inputGroupSelect01">Privillage</label>
+    </div>
+    <select   class="custom-select" id="inputGroupSelect03" v-model="employeeprivillage">
+      <option selected value=2>Employee</option>
+      <option value=1> Owner </option> 
+    </select>
+  </div>
+
+    <!-- end -->
+   
+    <!-- Default unchecked -->
+<!-- <div class="custom-control custom-checkbox">
+    <input type="checkbox" class="custom-control-input" id="defaultUnchecked" v-model="">
+    <label class="custom-control-label" for="defaultUnchecked">Default unchecked</label>
+</div> -->
+
+      
+  </div>
+</form></p>
+    <small class="text-muted container" >
+        <ul class="list-group container">
+     
+   <li class="list-group-item d-flex justify-content-between lh-condensed container" v-cloak v-for="employee in employees" v-on:dblclick="editEmployee(employee.id,employee.first_name,employee.privillage,employee.phonenumber,employee.username,employee.password)" style="overflow: auto;">
+        <div class="container">
+        <h4  class="my-0" v-cloak>  [[employee.first_name]] </h4>
+        <small class="text-muted" v-cloak> [[employee.phonenumber]] </small>
+      </div>
+      <div class="container">
+      <h4 class="my-0" v-cloak> [[employee.email]] </h4>
+      <small class="text-muted" v-cloak> [[toStringPriviilage(employee.privillage)]] </small>
+        
+      </div>
+  
+      <div class="container">
+      <h4 class="my-0" v-cloak>  Available </h4>
+        <div class="custom-control custom-checkbox" v-for="comp in company"  v-if="!checkOwnerShip(employee.id,comp.id)">
+    <input type="checkbox" class="custom-control-input" v-bind:id="comp.business_name" v-on:click="onChange($event,employee.id,comp.id)"  v-bind:value="comp.business_name" >
+    <label class="custom-control-label" v-bind:for="comp.business_name" v-cloak>[[comp.business_name]]</label>
+</div>
+
+  </div>
+      
+
+      <div class="container">
+      <h4 class="my-0" v-cloak>  Allowed </h4>
+      
+        <div class="custom-control custom-checkbox" v-for="comp in company"  v-if="checkOwnerShip(employee.id,comp.id)" v-on:click="RemoveOwnerShip(employee.id,comp.id)">
+   
+    <span   v-cloak>[[comp.business_name]]</span>
+</div>
+
+  </div>
+
+      <div class="container">
+
+     <!--     <i id="trashitem" class="fa fa-unlock fa-2x pull-right" v-on:click="passwordReset(employee.id)">bar</i> -->
+         
+
+         <i id="trashitem" class="fa fa-trash fa-2x center"  data-toggle="modal" data-target="#exampleModal" v-on:click="prepDelete(employee.id,employee.first_name)"></i>
+
+      </div>
+      
+      
+  </li>
+
+</ul>
+    </small>
+  </div>
+
 
 <!-- end employee -->
 
@@ -221,7 +311,7 @@ new Vue({
   	accountname:'',
   	accountbalance:'',
   	employeeusername:'',
-  	emplpyeepassword:'',
+  	employeepassword:'',
   	employeefirstname:'',
   	employeephone:'',
   	employees:'',
@@ -244,7 +334,10 @@ new Vue({
   	tobedeleted:'',
   	nametobedeleted:'',
     companynature:'',
-    userid:'{{user.id}}'
+    userid:'{{user.id}}',
+    state:false,
+    myusersbuz:'',
+    checkedBusinesses:[],
   	  },
   methods:{
     parseDate:function(date){
@@ -260,7 +353,7 @@ new Vue({
         this.$http.put('/api/business/'+this.companyid+'/',{'business_name':this.companyname,'business_phone':this.companyphone,'business_location':this.companyaddress,'business_email':this.companyemail,'business_nature':this.companynature,'user':this.userid})
        .then(function(response){
         // this.items=response.data
-        this.title=response.data
+      this.title=response.data
     	this.companyaddress='';
     	this.companyemail='';
     	this.companyname='';
@@ -280,12 +373,13 @@ new Vue({
        .then(function(response){
         // title is the return company object after creation
         this.title=response.data
+        this.grantOwnership(this.userid,this.title.id)
         this.createAccount_f0r_business(this.title)
-      this.companyaddress='';
-      this.companyemail='';
-      this.companyname='';
-      this.companyphone='';
-      this.companynature='';
+        this.companyaddress='';
+        this.companyemail='';
+        this.companyname='';
+        this.companyphone='';
+        this.companynature='';
 
         	this.getCompany()
        })
@@ -297,6 +391,20 @@ new Vue({
         
       e.preventDefault();
     },
+    grantOwnership:function(userid,businessid){
+      console.log(userid)
+      console.log(businessid)
+      this.$http.post('/api/ownership/',{'business':businessid,'user':userid})
+       .then(function(response){
+        this.title=response.data
+     
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+    },
+    
+
     prepDelete:function(id,name){
     this.tobedeleted=id
     this.nametobedeleted=name
@@ -413,14 +521,14 @@ new Vue({
     checkSubmitEmployeeForm:function(e){  
       if(this.editemployee){
         // updating editing item
-        this.$http.put('/api/employee/'+this.employeeid+'/',{'employee_privillage':this.employeeprivillage,'employee_position':this.employeeposition,'employee_firstname':this.employeefirstname,'employee_phone':this.employeephone,'company':this.employecompany,'user':this.employeeuser})
+        this.$http.put('/api/user/'+this.employeeid+'/',{'privillage':this.employeeprivillage,'first_name':this.employeefirstname,'phonenumber':this.employeephone,'username':this.employeeusername,'password':this.employeepassword})
        .then(function(response){
         // this.items=response.data
         this.title=response.data
         this.employeeid='';
     	this.employeeprivillage='';
     	this.employeeposition='';
-    	this.employeefirstname='';
+    	this.employeefirstname='';      
     	this.editemployee=false;
     	this.employeephone='';
     	this.addemployeebutton='Add';
@@ -434,9 +542,8 @@ new Vue({
        })
         
       }  else{
-      	$.notify('Adding Employee','info');
-        this.$http.post('/api/employee/',{'company':this.companyid,'employee_position':this.employeeposition,'employee_privillage':this.employeeprivillage,'employee_firstname':this.employeefirstname,'employee_phone':this.employeephone})
-
+      	$.notify('Adding Partner','info');
+        this.$http.post('/api/user/',{'privillage':this.employeeprivillage,'first_name':this.employeefirstname,'phonenumber':this.employeephone})
 
        .then(function(response){
         // this.items=response.data
@@ -448,7 +555,7 @@ new Vue({
     	this.employeeposition='';
     	this.employeephone='';
     	this.employecompany='';
-    	$.notify('Employee Added','success');
+    	$.notify('Partner Added','success');
     	this.getEmployee();
         
        })
@@ -470,32 +577,121 @@ new Vue({
      .catch(function(error){
       this.title='error getting items'
      })
+    },onChange(event,userid,businessid) {
+      console.log(event.target);
+      console.log(event.target.checked)
+      
+      console.log(event.target.value)
+
+      if(event.target.checked){
+        this.grantOwnership(userid,businessid)
+        console.log(this.checkedBusinesses)
+      }
+
+      else this.RemoveOwnerShip(userid,businessid)
+      
+      this.getEmployee()
+    this.getCompany()
+      // this.$emit("input", event.target.checked)
+    },
+    checkOwnerShip:function(userid,businessid){
+      console.log(userid)
+      console.log(businessid)
+    //   this.$http.post('/checkownership/'+userid+'/'+businessid+'/',{'business':businessid,'user':userid})
+    //    .then(function(response){
+    //     this.title=response.data
+    //   console.log('response title')
+    //  console.log(this.title)
+    //  if(response.data=='ok'){
+    //     console.log('response')
+    //     console.log(true)
+    //   // document.getElementById(id).checked="true";
+    //   this.state=true
+    // }
+    //     else {
+    //       console.log('response')
+    //       console.log(false)
+    //   // document.getElementById(id).checked="false";
+    //         this.state=false
+
+    // }
+    //    })
+    //    .catch(function(error){
+    //     this.title='error getting items'
+    //    })
+    var state=false
+    $.each(this.myusersbuz, function(key, value) {
+           if(value.user == userid && value.business == businessid){
+      state=true;
+
+               }
+
+         });
+    console.log('state')
+    console.log(state)
+
+    return state
+
+
     }
-    ,
-    getEmployee:function(){
-     this.$http.get('/api/employee')
+
+  ,
+    RemoveOwnerShip:function(userid,businessid){
+      console.log(userid)
+      console.log(businessid)
+      this.$http.post('/removeownership/'+userid+'/'+businessid+'/',{'business':businessid,'user':userid})
+       .then(function(response){
+        this.title=response.data
+        console.log('remove ownership')
+        this.getEmployee()
+        this.getCompany()
+
+       })
+       .catch(function(error){
+        this.title='error getting items'
+       })
+
+       if(this.title=='ok')return true
+        else return false
+
+    },
+  getMyuserBusinesses:function(){
+    this.$http.get('/get/myusers/buz/')
+     .then(function(response){
+      this.myusersbuz=response.data
+      // alert(this.myusersbuz)
+      
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+  }
+
+    ,getEmployee:function(){
+     this.$http.get('/get/myusers')
      .then(function(response){
       this.employees=response.data
+      this.getMyuserBusinesses()
       
      })
      .catch(function(error){
       this.title='error getting items'
      })
     },
-    editEmployee:function(id,firstname,privillage,position,phone,company,user){
+    editEmployee:function(id,firstname,privillage,phone,username,password){
     	this.employeeid=id;
     	this.employeefirstname=firstname;
     	this.employeeprivillage=privillage;
-    	this.employeeposition=position;
     	this.employeephone=phone;
-    	this.employecompany=company;
-    	this.employeeuser=user;
     	this.addemployeebutton="Edit";
     	this.editemployee=true;
+      this.employeeusername=username;
+      this.employeepassword=password
+
     },
     deleteEmployee:function(){
     	id=this.tobedeleted
-    	 this.$http.delete('/api/employee/'+id+'/')
+    	 this.$http.delete('/api/user/'+id+'/')
        .then(function(response){
         // this.items=response.data
         this.title=response.data
@@ -513,9 +709,9 @@ new Vue({
     	if(priv==3){
     		return "sales";
     	}else if(priv == 1){
-    		return "admin";
+    		return "Owner";
     	}else if(priv == 2){
-    		return "assistant"
+    		return "Employee"
 
     	}else if(priv == 4){
     		return "bursar"
@@ -533,6 +729,7 @@ new Vue({
     beforeMount(){
       this.getCompany()
       this.getAccount()
+      this.getEmployee()
     }
 })
 

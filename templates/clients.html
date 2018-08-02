@@ -120,14 +120,14 @@ body {
 <div id='clientsprofiles'>
 <div class="row">
 	
-<dir class="col-12 col-sm-12 col-md-6 col-lg-6">
-	  <table class="table" >
+<dir class="col-12 col-sm-12 col-md-6 col-lg-6" style="max-width:600px;overflow: auto;">
+	  <table class="table "  >
   <thead>
     <tr>
       <th scope="col">#</th>
       <th scope="col">Registrration Date</th>
+      <th scope="col">Username</th>
       <th scope="col">Firstname</th>
-      <th scope="col">Lastname</th>
       <th scope="col">Phone</th>
 
       <th></th>
@@ -137,8 +137,8 @@ body {
     <tr v-for="user in users"  v-cloak v-on:click="selectUser(user.id)" v-bind:class="{'bg-warning':(user.id==selecteduser)}">
       <th scope="row" v-cloak>[[user.id]]</th>
       <td v-cloak> [[parseDate(user.created_at)]] </td>
+      <td v-cloak>[[user.username]]</td>
       <td v-cloak>[[user.first_name]]</td>
-      <td v-cloak>[[user.last_name]]</td>
       <td v-cloak>[[user.phonenumber]]</td>
 
     </tr>

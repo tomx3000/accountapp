@@ -200,10 +200,12 @@ body {
       <th scope="col">#</th>
       <th scope="col">Date</th>
       <th scope="col" v-if="selected_business=='All'"> Business</th>
+      <th scope="col">Logged by</th>
       <th scope="col">Customer Name</th>
       <th scope="col">Description</th>
       <th scope="col">type</th>
       <th scope="col">Cost</th>
+
 
       <th></th>
     </tr>
@@ -214,6 +216,8 @@ body {
       <td v-cloak> [[parseDate(sale.created_at)]] </td>
       <td v-cloak v-if="selected_business=='All' && sale.account == account.id" v-for="account in accounts">
       <span v-for="business in businesses" v-if="account.business==business.id">[[business.business_name]]</span></td>
+
+      <td v-cloak > [[getUserFristname(sale.user)]] </td>
       <td v-cloak>[[sale.debit_from]]</td>
       <td v-cloak>[[sale.debit_reason]]</td>
       <td v-cloak>[[sale.debit_type]]</td>
@@ -350,6 +354,8 @@ number_of_accounts:'',
 businesses:'',
 selected_business:'All',
 showbusiness:true,
+userid:'{{user.id}}',
+mypeople:'',
 
   },
 
@@ -387,6 +393,18 @@ showbusiness:true,
       this.title='error getting items'
      })
     },
+    getUserFristname:function(userid){
+      var user=''
+      $.each(this.mypeople, function(key, value) {
+           if(value.id == userid ){
+            user=value.first_name
+             }
+         });
+      
+      if(user == '')user='{{user.first_name}}'
+      return user
+
+    },
     getBusiness:function(){
      this.$http.get('/api/business')
      .then(function(response){
@@ -407,7 +425,7 @@ showbusiness:true,
 
             }
         }else{
-            this.$http.post('/api/debitaccount/',{'account':this.useraccount,'debit_from':this.customername,'debit_reason':this.saledescription,'debit_amount':this.salesamount,'debit_type':this.salestype})
+            this.$http.post('/api/debitaccount/',{'account':this.useraccount,'debit_from':this.customername,'debit_reason':this.saledescription,'debit_amount':this.salesamount,'debit_type':this.salestype,'user':this.userid})
        .then(function(response){
         // this.items=response.data
         this.title=response.data
@@ -425,7 +443,7 @@ showbusiness:true,
 
       }else{
 
-        this.$http.put('/api/debitaccount/'+this.saleid+'/',{'account':this.useraccount,'debit_from':this.customername,'debit_reason':this.saledescription,'debit_amount':this.salesamount,'debit_type':this.salestype})
+        this.$http.put('/api/debitaccount/'+this.saleid+'/',{'account':this.useraccount,'debit_from':this.customername,'debit_reason':this.saledescription,'debit_amount':this.salesamount,'debit_type':this.salestype,'user':this.userid})
        .then(function(response){
         // this.items=response.data
         this.title=response.data
@@ -455,11 +473,22 @@ showbusiness:true,
       if(this.selected_business!="All")
       this.sales=this.filterBusinessSales(this.sales)
 
+      this.getMyPeople()
      })
      .catch(function(error){
       this.title='error getting items'
      })
 
+    }
+    ,getMyPeople:function(){
+     this.$http.get('/get/myusers')
+     .then(function(response){
+      this.mypeople=response.data
+      
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
     },
     parseDate:function(date){
 
