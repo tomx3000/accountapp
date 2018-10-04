@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from django.urls import  path,include
 
-from .views import Home,LoginUser,ExpensePage,ProfilePage,BusinessPage,SettingsPage,AcceptDebit,RegisterUser,ChangeUsername,ChangePassword,SalesPage,Clients,getUser,getBusiness,getCredit,getDebit,getAccount,getMyUsers,checkOwnership,RemoveOwnership,getMyUsersBuz
+from .views import Home,LoginUser,ExpensePage,ProfilePage,BusinessPage,SettingsPage,AcceptDebit,RegisterUser,ChangeUsername,ChangePassword,SalesPage,Clients,getUser,getBusiness,getCredit,getDebit,getAccount,getMyUsers,checkOwnership,RemoveOwnership,getMyUsersBuz,stockAdd
 
 
 urlpatterns = [
@@ -41,6 +41,11 @@ path('checkownership/<slug:userid>/<slug:businesid>/', checkOwnership,name='chek
 path('removeownership/<slug:userid>/<slug:businesid>/', RemoveOwnership,name='removeownership'),
 path('get/myusers/buz/', getMyUsersBuz,name='myusersbuz'),
 
+
+
+# route for monitoring opening and closing stocks
+# for commodity based businesses
+path('addstock/<slug:amount>/<slug:opening>/<slug:user>/<slug:bussiness>/', stockAdd,name='addstock'),
 
 
 

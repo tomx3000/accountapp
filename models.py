@@ -15,10 +15,8 @@ class User(AbstractUser):
     created_by=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,null=True,blank=True)
     created_at=models.DateTimeField(auto_now_add=True,null=True,blank=True)
     updated_at=models.DateTimeField(auto_now=True,null=True,blank=True)
-
 	
 	
-
     def __str__(self):
     	return str(self.id)+":"+str(self.username)
 
@@ -112,10 +110,13 @@ class DebitAccount(models.Model):
 		ordering=['-id']
 
 
-# spentcash
+# spentcash 
+# this is a cedit account transaction table
 class CreditAccount(models.Model):
 	account=models.ForeignKey(Account,on_delete=models.CASCADE)
 	user=models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)
+	# make this field nullable
+	# or remove it completely
 	credit_to=models.CharField(max_length=40,)
 	credit_amount=models.FloatField(max_length=40,default=0.0)	
 	credit_reason=models.CharField(max_length=40,null=True,blank=True,)
@@ -128,9 +129,44 @@ class CreditAccount(models.Model):
 	created_at=models.DateTimeField(auto_now_add=True,null=True,blank=True)
 	updated_at=models.DateTimeField(auto_now=True,null=True,blank=True)
 
+	# adding duration for each payment 
+	# options
+		# daily, custom duration eg. mothnly etc (this applies for things like rent) , fixed ord one time cost things (eg assets like motot cycle), unknown duration (e.g electric bill, etc)
+
+	# duration options={daily,custom,fixed,unknown}
+	credit_duration_option=models.CharField(max_length=40,null=True,blank=True,default="daliy")
+	
+	# duration for which the amount paid is going to last eg. 6 month fro rent
+	# duration should be stored in days
+	credit_duration=models.FloatField(max_length=40,default=0.0)
+
+	# calculate the equivalent daily cost for the amount paid
+	# total amount spent is stored with credit_amount
+	credit_daily_equivalent_cost=models.FloatField(max_length=40,default=0.0)	
+
+	# current amount paid
+	# this keeps track of payment made so far
+	# for this particular item/transaction
+	# it will only stop updating once it is equal with the credit_amount
+
+	# NOte this should be removed once you figure out a method for calculating the amounts on the fly
+	# ps: there should always be only one version of the truth
+	credit_current_payment=models.FloatField(max_length=40,default=0.0)
 
 	def __str__(self):
 		return str(self.id)+": "+str(self.account.account_name)
 	
+	
+# note this table was added on the fly, after the schema was designed
 
+# so when you get time , revisit the schema an make sure it fits well
+
+class StockCollection(models.Model):
+	# note user here is to imply the person editing the stock collection and not the owner of the business
+	user=models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)
+	business=models.ForeignKey(Business,on_delete=models.CASCADE)
+	amount=models.FloatField(default=0,null=True,blank=True)
+	openingstock=models.BooleanField(default=True)
+	created_at=models.DateTimeField(auto_now_add=True,null=True,blank=True)
+	updated_at=models.DateTimeField(auto_now=True,null=True,blank=True)
 	

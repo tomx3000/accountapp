@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import render,get_object_or_404,redirect
 from django.http import HttpResponse,HttpResponseRedirect
-from .models import Business,Account,DebitAccount,CreditAccount,User,Ownership
+from .models import Business,Account,DebitAccount,CreditAccount,User,Ownership,StockCollection
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 
@@ -11,7 +11,49 @@ from django.http import JsonResponse
 
 from .serializers import UserSerializer,AccountSerializer,CreditAccountSerializer,DebitAccountSerializer,BusinessSerializer,OwnershipSerializer
 from django.db.models import Q
+
+from django.utils.translation import gettext as _
 # Create your views here.
+from django.utils import timezone
+from datetime import timedelta
+import datetime
+
+
+@csrf_exempt
+@login_required(login_url='/login/')
+def stockAdd(request,*args,**kargs):
+
+	if kargs['opening'] == 'true':
+		kargs['opening']=True
+	else: 
+		kargs['opening']=False
+
+	today=datetime.date.today()
+
+	tomorrow=today+timedelta(days=1)
+	user=User.objects.get(id=kargs['user'])
+	business=Business.objects.get(id=kargs['bussiness'])
+
+	stock_today=StockCollection.objects.filter(created_at__gte=today,created_at__lt=tomorrow,business=business,openingstock=kargs['opening'])
+
+	if(stock_today.count()<1):
+		print("Creating new stock")
+		
+		new_stock_entry=StockCollection.objects.create(amount=kargs['amount'],openingstock=kargs['opening'],user=user,business=business)
+		new_stock_entry.save()
+
+	else:
+		print("Updating existing stock")
+		# to improve performance , you can remove the update of the business, since its never gona happen for the user to change the business
+		
+		stock_today.update(amount=kargs['amount'],openingstock=kargs['opening'],user=user,business=business)
+
+	# the algorithm pseudo
+	# check if the opening/closing stock for the day is present
+	# if yes update the current stock with the new amount
+	# if no create a new stock
+
+	return HttpResponse('ok')
 
 @login_required(login_url='/login/')
 def Clients(request,*args,**kargs):
@@ -25,6 +67,16 @@ def Clients(request,*args,**kargs):
 @login_required(login_url='/login/')
 def Home(request,*args,**kargs):
 	# user = request.user
+
+	# this set the language in the session
+	# from django.utils import translation
+	# user_language = 'sw'
+	# translation.activate(user_language)
+	# request.session[translation.LANGUAGE_SESSION_KEY] = user_language
+
+	# remove the language from the session and allows for the site to use the langusge sent b the browser header 
+	# if translation.LANGUAGE_SESSION_KEY in request.session:
+	# 	del request.session[translation.LANGUAGE_SESSION_KEY]
 	
 	return render(request,'home.html')
 
@@ -240,7 +292,63 @@ def RegisterUser(request,*args,**kargs):
 
 	else:
 		return HttpResponse('ok')
-		
-	
+			
 # print(request.POST)
-	
+
+def option_daily_select(*args,**kargs):
+	user=User.objects.get(id=kargs['userid'])
+	qs=CreditAccount.objects.filter(account__business__owners=user,id=kargs["creditid"]).update(credit_amount=kargs["amount"],credit_duration_option="daily")
+	# update the credit_duration_option with daily
+	# just update the credit_amount
+
+	pass
+
+# use this to convert the durations into seconds
+def get_duration(*args,**kargs):
+	duration =0
+	# use time daelta to calculate the respective duration in seconds
+	return	duration
+
+def get_daily_cost(*args,**kargs):
+	daily_eq=0
+	return daily_eq
+
+def option_custom_select(*args,**kargs):
+	user=User.objects.get(id=kargs['userid'])
+	qs=CreditAccount.objects.filter(account__business__owners=user,id=kargs["creditid"]).update(credit_amount=kargs["amount"],credit_duration_option="custom",credit_duration=get_duration(args,kargs),credit_daily_equivalent_cost=get_daily_cost(args,kargs))
+
+	# update the credit_duration_option with custom
+	# uodate the credit)duration with the equvalent time in seconds
+	# update the credit_daily_equivalent_cost with the calculted daily value of the amount in credit_amount
+	# 
+	pass
+
+def option_fixed_select(*args,**kargs):
+	user=User.objects.get(id=kargs['userid'])
+	qs=CreditAccount.objects.filter(account__business__owners=user,id=kargs["creditid"]).update(credit_amount=kargs["amount"],credit_duration_option="fixed",credit_duration=get_duration(args,kargs),credit_daily_equivalent_cost=get_daily_cost(args,kargs))
+
+	pass
+
+def option_unknown_select(*args,**kargs):
+	user=User.objects.get(id=kargs['userid'])
+	qs=CreditAccount.objects.filter(account__business__owners=user,id=kargs["creditid"]).update(credit_amount=kargs["amount"],credit_duration_option="unknown")
+	pass
+
+
+def option_daily_update():
+
+	pass
+
+def option_custom_update():
+	pass
+
+
+def option_fixed_update():
+	pass
+
+def option_unknown_update():
+	pass
+
+
+
+

@@ -2,7 +2,11 @@
 
 {%extends 'base.html'%}
 
+{% load i18n %}
+
 {%block style%}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <style type="text/css">
 	    :root {
   --input-padding-x: .75rem;
@@ -102,12 +106,13 @@ body {
 
     <div id="searchexpense" class="container">
     
-   <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-2  mr-0" href="#"> {{user.username}}</a>
-      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+   <nav class="navbar navbar-white fixed-top bg-white flex-md-nowrap p-0 shadow">
+      <a class="navbar col-2  mr-0" href="#"> {{user.username}}</a>
+      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="{% trans 'Search' %}" aria-label="Search">
       <ul class="navbar-nav px-3 col-2">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="/login/">Sign out</a>
+         <a class="nav-link" href="#" ><i class="fa fa-search" aria-hidden="true" style="color:black;"></i></a>
+
         </li>
       </ul>
     </nav>
@@ -125,10 +130,10 @@ body {
   <thead>
     <tr>
       <th scope="col">#</th>
-      <th scope="col">Registrration Date</th>
-      <th scope="col">Username</th>
-      <th scope="col">Firstname</th>
-      <th scope="col">Phone</th>
+      <th scope="col"> {% trans "Registrration Date" %}</th>
+      <th scope="col">{% trans "Username" %}</th>
+      <th scope="col">{% trans "Firstname" %}</th>
+      <th scope="col">{% trans "Phone" %}</th>
 
       <th></th>
     </tr>
@@ -154,7 +159,7 @@ body {
      <div class="row">
    <li style="" class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" >
         <div>
-        <h4  class="my-0" >  Firstname </h4>
+        <h4  class="my-0" >   {% trans "First Name" %}</h4>
         <small class="text-muted" v-cloak >  [[user.first_name]]</small>
       </div>
       <div>
@@ -166,7 +171,7 @@ body {
 
            <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" >
         <div>
-        <h4  class="my-0" >  Last Name </h4>
+        <h4  class="my-0" >  {% trans "Last Name" %} </h4>
         <small class="text-muted" v-cloak > [[user.last_name]] </small>
         
       </div>
@@ -185,7 +190,7 @@ body {
           <div class="row" style="margin-top: 20px;">
              <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" >
         <div>
-        <h4  class="my-0" >  Birthdate </h4>
+        <h4  class="my-0" >  {% trans "Birthdate" %} </h4>
         <small class="text-muted" v-cloak > [[user.birth_date]] </small>
         
       </div>
@@ -198,7 +203,7 @@ body {
   </li>
    <li style="" class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6">
         <div>
-        <h4  class="my-0" >  Phone </h4>
+        <h4  class="my-0" >  {% trans "Phone" %} </h4>
         <small class="text-muted" v-cloak > [[user.phonenumber]] </small>
       </div>
       <div>
@@ -214,7 +219,7 @@ body {
                <div class="row" style="margin-top: 20px;">
      	   <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" >
         <div>
-        <h4  class="my-0" >  Email </h4>
+        <h4  class="my-0" >  {% trans "Email" %} </h4>
         <small class="text-muted" v-cloak > [[user.email]] </small>
       </div>
       <div>
@@ -226,7 +231,7 @@ body {
   </li>
    <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" >
         <div>
-        <h4  class="my-0" >  Gender </h4>
+        <h4  class="my-0" >  {% trans "Gender" %} </h4>
         <small class="text-muted" v-cloak > [[user.gender]] </small>
       </div>
       <div>
@@ -266,25 +271,26 @@ body {
 </div>
 <!-- business part of user profile -->
 <div style="margin-left: 30px;">
-Businesses
+{% trans "Businesses" %}
+
 	 <small class="text-muted">
     	  <ul class="list-group">
     <li class="list-group-item d-flex justify-content-between lh-condensed"  v-cloak  style="overflow: auto;" v-on:click="filterAccounts('',true)">
         <div class="container">
-        <h4  class="my-0" v-cloak>   Name </h4>
-       <small class="text-muted" v-cloak> Date Created </small>
+        <h4  class="my-0" v-cloak>    {% trans "Name" %}</h4>
+       <small class="text-muted" v-cloak>  {% trans "Date Created" %}</small>
 
       </div class="container">
       <div>
-      <h4 class="my-0" v-cloak> Phonenumber </h4>
-     <small class="text-muted" v-cloak> Email </small>
+      <h4 class="my-0" v-cloak>  {% trans "Phonenumber" %}</h4>
+     <small class="text-muted" v-cloak>  {% trans "Email" %}</small>
 
         
       </div>
 
        <div class="container">
-      <h4 class="my-0" v-cloak> Nature  </h4>
-      <small class="text-muted" v-cloak> Location </small>
+      <h4 class="my-0" v-cloak>  {% trans "Nature" %} </h4>
+      <small class="text-muted" v-cloak>  {% trans "Location" %}</small>
         
       </div>
       
@@ -324,14 +330,14 @@ Businesses
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom cont " id="search" style="margin-left: 30px;overflow: auto;">
 <div class="container">
-	<h1 class="go3d" v-cloak v-if="isGrossprofit" >Gross Profit: [[ number_to_Cash(getProfiLoss()) ]]</h1>
-  <h1 class="go3d" v-cloak v-if="!isGrossprofit" >Gross Loss: [[ number_to_Cash(getProfiLoss()) ]]</h1>
+	<h1 class="go3d" v-cloak v-if="isGrossprofit" >{% trans "Gross Profit" %}: [[ number_to_Cash(getProfiLoss()) ]]</h1>
+  <h1 class="go3d" v-cloak v-if="!isGrossprofit" >{% trans "Gross Loss" %}: [[ number_to_Cash(getProfiLoss()) ]]</h1>
 
 </div>
 <dir class="container">
-	 <h1 class="go3d" v-cloak v-if="isNetprofit" >Net Profit: [[number_to_Cash(getProfiLoss(false)) ]]</h1>
+	 <h1 class="go3d" v-cloak v-if="isNetprofit" >{% trans "Net Profit" %}: [[number_to_Cash(getProfiLoss(false)) ]]</h1>
 
- <h1 class="go3d" v-cloak v-if="!isNetprofit" >Net Loss: [[ number_to_Cash(getProfiLoss(false)) ]]</h1>
+ <h1 class="go3d" v-cloak v-if="!isNetprofit" >{% trans "Net Loss" %}: [[ number_to_Cash(getProfiLoss(false)) ]]</h1>
 
 </dir>
   
@@ -343,7 +349,7 @@ Businesses
   <li class="list-group-item d-flex justify-content-between lh-condensed">
       <div>
    
-        <h4  class="" v-cloak><!-- [[customer.customer_name]] -->  Pending Sales</h4>
+        <h4  class="" v-cloak><!-- [[customer.customer_name]] -->  {% trans "Pending Sales" %}</h4>
         
       </div>
       <div>
@@ -355,7 +361,7 @@ Businesses
   <li class="list-group-item d-flex justify-content-between lh-condensed">
       <div>
    
-        <h4  class="" v-cloak><!-- [[customer.customer_name]] -->  Actual Sales</h4>
+        <h4  class="" v-cloak><!-- [[customer.customer_name]] -->  {% trans "Actual Sales" %}</h4>
         
       </div>
       <div>
@@ -367,7 +373,7 @@ Businesses
   <li class="list-group-item d-flex justify-content-between lh-condensed">
       <div>
    
-        <h4  class="" v-cloak><!-- [[customer.customer_name]] -->  Expense</h4>
+        <h4  class="" v-cloak><!-- [[customer.customer_name]] --> {% trans "Expense" %} </h4>
         
       </div>
       <div>

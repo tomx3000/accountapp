@@ -2,7 +2,10 @@
 
 {%extends 'base.html'%}
 
+{% load i18n %}
+
 {%block style%}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <style type="text/css">
   
@@ -21,12 +24,12 @@
 
  <div id="" class="container">
     
-   <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-2  mr-0" href="#"> {{user.username}}</a>
-      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+   <nav class="navbar navbar-white fixed-top bg-white flex-md-nowrap p-0 shadow">
+      <a class="navbar col-2  mr-0" href="#"> {{user.username}}</a>
+      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="{% trans 'Search' %}" aria-label="Search">
       <ul class="navbar-nav px-3 col-2">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="/login/">Sign out</a>
+          <a class="nav-link" href="#" ><i class="fa fa-search" aria-hidden="true" style="color:black;"></i></a>
         </li>
       </ul>
     </nav>
@@ -46,12 +49,12 @@
      <div class="row">
    <li style="" class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('firstname')">
         <div>
-        <h4  class="my-0" >  Firstname </h4>
+        <h4  class="my-0" >  {% trans "First Name" %}  </h4>
         <small class="text-muted" v-cloak v-if="!editfirstname">  [[user.first_name]]</small>
          <small class="text-muted" v-if="editfirstname"><input type="text" name="" v-model="firstname" class="form-control">  </small>
       </div>
       <div>
-      <h4 class="my-0" v-cloak v-if="editfirstname"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,firstname,user.last_name,user.phonenumber,user.email,user.username,user.gender,user.birth_date,user.password,'firstname')">update</button> </h4>
+      <h4 class="my-0" v-cloak v-if="editfirstname"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,firstname,user.last_name,user.phonenumber,user.email,user.username,user.gender,user.birth_date,user.password,'firstname')">{% trans "update" %} </button> </h4>
      
         
       </div>
@@ -60,12 +63,12 @@
 
            <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('lastname')">
         <div>
-        <h4  class="my-0" >  Last Name </h4>
+        <h4  class="my-0" > {% trans "Last Name" %}  </h4>
         <small class="text-muted" v-cloak v-if="!editlastname"> [[user.last_name]] </small>
         <small class="text-muted" v-if="editlastname"><input type="text" name="" class="form-control" v-model="lastname">  </small>
       </div>
       <div>
-      <h4 class="my-0" v-cloak v-if="editlastname"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,lastname,user.phonenumber,user.email,user.username,user.gender,user.birth_date,user.password,'lastname')">update</button> </h4>
+      <h4 class="my-0" v-cloak v-if="editlastname"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,lastname,user.phonenumber,user.email,user.username,user.gender,user.birth_date,user.password,'lastname')">{% trans "update" %} </button> </h4>
         
       </div>
       
@@ -79,12 +82,12 @@
           <div class="row" style="margin-top: 20px;">
              <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('birthdate')">
         <div>
-        <h4  class="my-0" >  Birthdate </h4>
+        <h4  class="my-0" > {% trans "Birthdate" %}  </h4>
         <small class="text-muted" v-cloak v-if="!editbirthdate"> [[user.birth_date]] </small>
         <small class="text-muted" v-if="editbirthdate"><input type="date" name="" class="form-control" v-model="birthdate">  </small>
       </div>
       <div>
-      <h4 class="my-0" v-cloak v-if="editbirthdate"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,user.last_name,user.phonenumber,user.email,user.username,user.gender,birthdate,user.password,'birthdate')">update</button> </h4>
+      <h4 class="my-0" v-cloak v-if="editbirthdate"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,user.last_name,user.phonenumber,user.email,user.username,user.gender,birthdate,user.password,'birthdate')">{% trans "update" %}</button> </h4>
         
       </div>
       
@@ -92,12 +95,12 @@
   </li>
    <li style="" class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('phone')">
         <div>
-        <h4  class="my-0" >  Phone </h4>
+        <h4  class="my-0" >  {% trans "Phone" %} </h4>
         <small class="text-muted" v-cloak v-if="!editphone"> [[user.phonenumber]] </small>
         <small class="text-muted" v-if="editphone"><input type="text" name="" class="form-control" v-model="phone">  </small>
       </div>
       <div>
-      <h4 class="my-0" v-cloak v-if="editphone"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,user.last_name,phone,user.email,user.username,user.gender,user.birth_date,user.password,'phone')">update</button> </h4>
+      <h4 class="my-0" v-cloak v-if="editphone"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,user.last_name,phone,user.email,user.username,user.gender,user.birth_date,user.password,'phone')">{% trans "update" %}</button> </h4>
         
       </div>
       
@@ -109,12 +112,12 @@
                <div class="row" style="margin-top: 20px;">
      	   <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('email')">
         <div>
-        <h4  class="my-0" >  Email </h4>
+        <h4  class="my-0" >  {% trans "Email" %} </h4>
         <small class="text-muted" v-cloak v-if="!editemial"> [[user.email]] </small>
         <small class="text-muted" v-if="editemial"><input type="text" name="" class="form-control" v-model="email">  </small>
       </div>
       <div>
-      <h4 class="my-0" v-cloak v-if="editemial"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,user.last_name,user.phonenumber,email,user.username,user.gender,user.birth_date,user.password,'email')">update</button> </h4>
+      <h4 class="my-0" v-cloak v-if="editemial"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,user.last_name,user.phonenumber,email,user.username,user.gender,user.birth_date,user.password,'email')">{% trans "update" %}</button> </h4>
         
       </div>
       
@@ -122,12 +125,12 @@
   </li>
    <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('gender')">
         <div>
-        <h4  class="my-0" >  Gender </h4>
+        <h4  class="my-0" >  {% trans "Gender" %} </h4>
         <small class="text-muted" v-cloak v-if="!editgender"> [[user.gender]] </small>
         <small class="text-muted" v-if="editgender"><input type="text" name="" class="form-control" v-model="gender">  </small>
       </div>
       <div>
-      <h4 class="my-0" v-cloak v-if="editgender"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,user.last_name,user.phonenumber,user.email,user.username,gender,user.birth_date,user.password,'gender')">update</button> </h4>
+      <h4 class="my-0" v-cloak v-if="editgender"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,user.last_name,user.phonenumber,user.email,user.username,gender,user.birth_date,user.password,'gender')">{% trans "update" %}</button> </h4>
         
       </div>
       
@@ -168,26 +171,26 @@
       <h5 class="mb-1"></h5>
       <small v-cloak>[[user.username]]</small>
     </div>
-    <p class="mb-1" >Username  </p>
+    <p class="mb-1" >{% trans "Username" %}  </p>
 <!--     <p class="text-danger" v-cloak>[[error]]</p>
- -->    <small v-on:click="change('username')" v-if="!editusername">change</small>
+ -->    <small v-on:click="change('username')" v-if="!editusername">{% trans "change" %}</small>
   
 
 
 <div class="input-group mb-3" v-if="editusername">
   <input type="text" class="form-control" placeholder="username" aria-label="username" aria-describedby="basic-addon2" v-model="username">
   <div class="input-group-append">
-    <button class="btn btn-outline-secondary" type="button" v-if="editusername" v-on:click="updateUsername(user.id,username)">Update</button>
+    <button class="btn btn-outline-secondary" type="button" v-if="editusername" v-on:click="updateUsername(user.id,username)">{% trans "update" %}</button>
   </div>
 </div>
 <br><br>
-    <p class="mb-1" >Password</p>
+    <p class="mb-1" >{% trans "Password" %}</p>
 <!--     <p class="text-danger" v-cloak>[[passerror]]</p>
- -->    <small v-on:click="change('password')" v-if="!editpassword">change</small>
+ -->    <small v-on:click="change('password')" v-if="!editpassword">{% trans "change" %}</small>
     <!-- old password -->
    	<div class="input-group input-group-sm mb-3" >
   <div class="input-group-prepend" v-if="editpassword">
-    <span class="input-group-text" id="inputGroup-sizing-sm">old</span>
+    <span class="input-group-text" id="inputGroup-sizing-sm">{% trans "old" %}</span>
   </div>
   <input type="password" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"  v-model="oldpassword" v-if="editpassword">
 </div>
@@ -195,7 +198,7 @@
    <!-- new1 password -->
    	<div class="input-group input-group-sm mb-3" >
   <div class="input-group-prepend" v-if="editpassword">
-    <span class="input-group-text" id="inputGroup-sizing-sm">new</span>
+    <span class="input-group-text" id="inputGroup-sizing-sm">{% trans "new" %}</span>
   </div>
   <input type="password" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"  v-model="newpassword_one" v-if="editpassword">
 </div>
@@ -203,12 +206,12 @@
    <!-- new2 password -->
    	<div class="input-group input-group-sm mb-3" >
   <div class="input-group-prepend" v-if="editpassword">
-    <span class="input-group-text" id="inputGroup-sizing-sm">new</span>
+    <span class="input-group-text" id="inputGroup-sizing-sm">{% trans "new" %}</span>
   </div>
   <input type="password" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"  v-model="newpassword_two" v-if="editpassword">
 </div>
 <!-- end new2 password -->
-    <button v-if="editpassword" v-on:click="updatePassword(user.id,oldpassword,newpassword_one,newpassword_two,user.username)" class="btn btn-outline-secondary" type="button">uodate</button>
+    <button v-if="editpassword" v-on:click="updatePassword(user.id,oldpassword,newpassword_one,newpassword_two,user.username)" class="btn btn-outline-secondary" type="button">{% trans "update" %}</button>
   </div>
 
 </div>

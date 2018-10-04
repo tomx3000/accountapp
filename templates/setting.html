@@ -2,6 +2,8 @@
 
 {%extends 'base.html'%}
 
+{% load i18n %}
+
 {%block style%}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style type="text/css">
@@ -14,12 +16,12 @@
 
  <div id="" class="container">
     
-   <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-2  mr-0" href="#"> {{user.username}}</a>
-      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+   <nav class="navbar navbar-white fixed-top bg-white flex-md-nowrap p-0 shadow">
+      <a class="navbar col-2  mr-0" href="#"> {{user.username}}</a>
+      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="{% trans 'Search' %}" aria-label="Search">
       <ul class="navbar-nav px-3 col-2">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="/login/">Sign out</a>
+        <a class="nav-link" href="#" ><i class="fa fa-search" aria-hidden="true" style="color:black;"></i></a>
         </li>
       </ul>
     </nav>
@@ -39,19 +41,19 @@
   <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Are You Sure </h5>
+        <h5 class="modal-title" id="exampleModalLabel">{% trans "Are You Sure" %} </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body ">
-      	<p v-cloak>Deleteing [[nametobedeleted]] will erase all traces </p>
+      	<p v-cloak>{% trans "Deleting" %} [[nametobedeleted]] {% trans "will erase all traces" %} </p>
         
 
       </div>
       <div class="modal-footer">
-   <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal" v-on:click="deleteEmployee()" >Yes</button>
-        <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal" v-on:click="stopDelete()">No</button>
+   <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal" v-on:click="deleteEmployee()" >{% trans "Yes" %}</button>
+        <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal" v-on:click="stopDelete()">{% trans "No" %}</button>
       </div>
     </div>
   </div>
@@ -66,7 +68,7 @@
 <div class="list-group container">
   <div href="#" class="list-group-item list-group-item-action flex-column align-items-start " style="margin-top: 20px">
     <div class="d-flex w-100 justify-content-between">
-      <h5 class="mb-1">Business</h5>
+      <h5 class="mb-1">{% trans "Business" %}</h5>
       <small><button v-on:click="checkSubmitCompanyForm" type="submit" class="btn btn-outline-primary btn-sm" v-cloak>[[company_add_edit_button]]</button></small>
     </div>
     <p class="mb-1">
@@ -74,29 +76,29 @@
     	{%csrf_token%}
   <div class="form-row align-items-center">
     <div class="col-sm-3 my-1">
-      <label class="sr-only" for="inlineFormInputCopanyName">BusinessName</label>
-      <input type="text" class="form-control" id="inlineFormInputCompanyName" placeholder="Name"  v-model="companyname">
+      <label class="sr-only" for="inlineFormInputCopanyName">{% trans "BusinessName" %}</label>
+      <input type="text" class="form-control" id="inlineFormInputCompanyName" placeholder="{% trans 'BusinessName' %}"  v-model="companyname">
     </div>
     <div class="col-sm-3 my-1">
-      <label class="sr-only" for="inlineFormInputGroupCompanyEmail">Email</label>
+      <label class="sr-only" for="inlineFormInputGroupCompanyEmail">{% trans "Email" %}</label>
       <div class="input-group">
         <div class="input-group-prepend">
           <div class="input-group-text">@</div>
         </div>
-        <input type="text" class="form-control" id="inlineFormInputGroupCompanyEmail" placeholder="Email"  v-model="companyemail">
+        <input type="text" class="form-control" id="inlineFormInputGroupCompanyEmail" placeholder="{% trans 'Email' %}"  v-model="companyemail">
       </div>
     </div>
     <div class="col-sm-3 my-1">
-      <label class="sr-only" for="inlineFormInputCompanyPhone">Phone</label>
-      <input type="text" class="form-control" id="inlineFormInputCompanyPhone" placeholder="Phone"  v-model="companyphone">
+      <label class="sr-only" for="inlineFormInputCompanyPhone">{% trans "Phone" %}</label>
+      <input type="text" class="form-control" id="inlineFormInputCompanyPhone" placeholder="{% trans 'Phone' %}"  v-model="companyphone">
     </div>
     <div class="col-sm-3 my-1">
-      <label class="sr-only" for="inlineFormInputCompanyAddress">Address</label>
-      <input type="text" class="form-control" id="inlineFormInputCompanyAddress" placeholder="Address"  v-model="companyaddress">
+      <label class="sr-only" for="inlineFormInputCompanyAddress">{% trans "Address" %}</label>
+      <input type="text" class="form-control" id="inlineFormInputCompanyAddress" placeholder="{% trans 'Address' %}"  v-model="companyaddress">
     </div>
     <div class="col-sm-3 my-1">
-      <label class="sr-only" for="inlineFormInputCompanyNature">Nature</label>
-      <input type="text" class="form-control" id="inlineFormInputCompanyNature" placeholder="Nature"  v-model="companynature">
+      <label class="sr-only" for="inlineFormInputCompanyNature">{% trans "Nature" %}</label>
+      <input type="text" class="form-control" id="inlineFormInputCompanyNature" placeholder="{% trans 'Nature' %}"  v-model="companynature">
     </div>
     
   </div>
@@ -144,16 +146,16 @@
   <!-- end store -->
   <div href="#" class="list-group-item list-group-item-action flex-column align-items-start" style="margin-top: 20px">
     <div class="d-flex w-100 justify-content-between">
-      <h5 class="mb-1">Account</h5>
+      <h5 class="mb-1">{% trans "Account" %}</h5>
       <small class="text-muted">
-      <button type="submit" class="btn btn-outline-primary btn-sm" v-on:click="checkSubmitAccountForm">Update</button></small>
+      <button type="submit" class="btn btn-outline-primary btn-sm" v-on:click="checkSubmitAccountForm">{% trans "Update" %}</button></small>
     </div>
        <p class="mb-1">    	
     <form>
   <div class="form-row align-items-center">
     <div class="col-sm-3 my-1">
-      <label class="sr-only" for="inlineFormInputAccountName">Name</label>
-      <input type="text" class="form-control" id="inlineFormInputAccountName" placeholder="Name" v-model="accountname">
+      <label class="sr-only" for="inlineFormInputAccountName">{% trans "Name" %}</label>
+      <input type="text" class="form-control" id="inlineFormInputAccountName" placeholder="{% trans 'Name' %}" v-model="accountname">
     </div>
  <!--    <div class="col-sm-3 my-1">
       <label class="sr-only" for="inlineFormInputGroupAccountBalance" >Balance</label>
@@ -191,29 +193,29 @@
 <!-- begin employee -->
    <div href="#" class="list-group-item list-group-item-action flex-column align-items-start" style="margin-top: 20px">
     <div class="d-flex w-100 justify-content-between">
-      <h5 class="mb-1">Partners</h5>
-      <small class="text-muted"><button type="submit" v-bind:class="{'btn':true,'btn-sm':true,'btn-block':true,'btn-outline-primary':(addemployeebutton=='Add'),'btn-outline-dark':(addemployeebutton!='Add')}" v-cloak v-on:click="checkSubmitEmployeeForm">[[addemployeebutton]]</button></small>
+      <h5 class="mb-1">{% trans "Partners" %}</h5>
+      <small class="text-muted"><button type="submit" v-bind:class="{'btn':true,'btn-sm':true,'btn-block':true,'btn-outline-primary':(addemployeebutton=='{% trans 'Add' %}'),'btn-outline-dark':(addemployeebutton!='{% trans 'Add' %}')}" v-cloak v-on:click="checkSubmitEmployeeForm">[[addemployeebutton]]</button></small>
     </div>
     <p class="mb-1">      
     <form>
   <div class="form-row align-items-center">
     <div class="col-sm-3 my-1">
-      <label class="sr-only" for="inlineFormInputEmployeeFirstname">firstname</label>
-      <input type="text" class="form-control" id="inlineFormInputEmployeeFirstname" placeholder="firstname" v-model="employeefirstname">
+      <label class="sr-only" for="inlineFormInputEmployeeFirstname">{% trans "firstname" %}</label>
+      <input type="text" class="form-control" id="inlineFormInputEmployeeFirstname" placeholder="{% trans 'firstname' %}" v-model="employeefirstname">
     </div>
     <div class="col-sm-3 my-1">
-      <label class="sr-only" for="inlineFormInputGroupEmployeePhone">phone</label>        
-        <input type="text" class="form-control" id="inlineFormInputGroupEmployeePhone" placeholder="phone" v-model="employeephone">
+      <label class="sr-only" for="inlineFormInputGroupEmployeePhone">{% trans "phone" %}</label>        
+        <input type="text" class="form-control" id="inlineFormInputGroupEmployeePhone" placeholder="{% trans 'phone' %}" v-model="employeephone">
     </div>
 
     <!-- new selection priv -->
     <div class="input-group col-sm-3">
     <div class="input-group-prepend">
-      <label class="input-group-text" for="inputGroupSelect01">Privillage</label>
+      <label class="input-group-text" for="inputGroupSelect01">{% trans "Privillage" %}</label>
     </div>
     <select   class="custom-select" id="inputGroupSelect03" v-model="employeeprivillage">
-      <option selected value=2>Employee</option>
-      <option value=1> Owner </option> 
+      <option selected value=2>{% trans "Employee" %}</option>
+      <option value=1> {% trans "Owner" %} </option> 
     </select>
   </div>
 
@@ -243,7 +245,7 @@
       </div>
   
       <div class="container">
-      <h4 class="my-0" v-cloak>  Available </h4>
+      <h4 class="my-0" v-cloak>  {% trans "Available" %} </h4>
         <div class="custom-control custom-checkbox" v-for="comp in company"  v-if="!checkOwnerShip(employee.id,comp.id)">
     <input type="checkbox" class="custom-control-input" v-bind:id="comp.business_name" v-on:click="onChange($event,employee.id,comp.id)"  v-bind:value="comp.business_name" >
     <label class="custom-control-label" v-bind:for="comp.business_name" v-cloak>[[comp.business_name]]</label>
@@ -253,7 +255,7 @@
       
 
       <div class="container">
-      <h4 class="my-0" v-cloak>  Allowed </h4>
+      <h4 class="my-0" v-cloak>  {% trans "Allowed" %} </h4>
       
         <div class="custom-control custom-checkbox" v-for="comp in company"  v-if="checkOwnerShip(employee.id,comp.id)" v-on:click="RemoveOwnerShip(employee.id,comp.id)">
    
@@ -328,7 +330,6 @@ new Vue({
   	company:'',
   	account:'',
   	accountid:'',
-  	addstorebutton:'Add',
   	storecompanyid:1,
   	currentuserid:'',
   	tobedeleted:'',
@@ -338,6 +339,8 @@ new Vue({
     state:false,
     myusersbuz:'',
     checkedBusinesses:[],
+    current_language:'{{ LANGUAGE_CODE }}',
+
   	  },
   methods:{
     parseDate:function(date){
@@ -359,7 +362,7 @@ new Vue({
     	this.companyname='';
     	this.companyphone='';
       this.editcompany=false;
-      this.company_add_edit_button='Add'
+      this.company_add_edit_button=this.matchLanguage('Add')
       this.companynature='';
     	this.getCompany();
 
@@ -431,7 +434,7 @@ new Vue({
     	this.companyphone=phone;
       this.companynature=nature
       this.editcompany=true;
-      this.company_add_edit_button='Update'      
+      this.company_add_edit_button=this.matchLanguage('Update')      
     }
     // end company control code
     
@@ -531,7 +534,7 @@ new Vue({
     	this.employeefirstname='';      
     	this.editemployee=false;
     	this.employeephone='';
-    	this.addemployeebutton='Add';
+    	this.addemployeebutton=this.matchLanguage('Add');
     	this.employeeuser='';
     	this.employecompany='';
     	this.getEmployee();
@@ -683,7 +686,7 @@ new Vue({
     	this.employeefirstname=firstname;
     	this.employeeprivillage=privillage;
     	this.employeephone=phone;
-    	this.addemployeebutton="Edit";
+    	this.addemployeebutton=this.matchLanguage('Edit');
     	this.editemployee=true;
       this.employeeusername=username;
       this.employeepassword=password
@@ -720,13 +723,57 @@ new Vue({
     		return "godown";
     	}
 
-    }
+    },
+    matchLanguage:function(word){
+      new_word=word
+        if (word=="Add"){
+          if(this.current_language=='en'){
+              new_word=word      
+          }
+          else if(this.current_language=='sw'){
+              new_word="Ongeza"
+          }
+        
+        }else if(word=="Update"){
+          if(this.current_language=='en'){
+              new_word=word      
+          }
+          else if(this.current_language=='sw'){
+              new_word="sahihisha"
+          }
+
+        }else if(word=="Edit"){
+          if(this.current_language=='en'){
+              new_word=word      
+          }
+          else if(this.current_language=='sw'){
+              new_word="sahihisha"
+          }
+
+        }
+        return new_word
+
+    },
 
     // end employee control code
 
   }
   ,
     beforeMount(){
+
+      console.log(this.current_language)
+    if(this.current_language=='en'){
+      console.log('got english')
+      
+      this.addemployeebutton="Add"
+      this.company_add_edit_button="Add"
+    }
+    else if(this.current_language=='sw'){
+      console.log('got swahili')
+      this.addemployeebutton="Ongeza"
+      this.company_add_edit_button="Ongeza"
+    }
+
       this.getCompany()
       this.getAccount()
       this.getEmployee()

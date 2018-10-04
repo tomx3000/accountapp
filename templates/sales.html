@@ -1,6 +1,7 @@
 
 
 {%extends 'base.html'%}
+{% load i18n %}
 
 {%block style%}
 <!-- {% load static %}
@@ -17,6 +18,7 @@
 html,
 body {
   height: 100%;
+
 }
 
 /*body {
@@ -98,7 +100,46 @@ body {
   text-align: center;
   padding: 10px;}
 
+  .stocks_display{
+  min-width:50px; max-width:50px; 
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2),0 -1px 2px 0 rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  margin-right:20px; 
+border-radius: 25px;
+}
+.display_sales_form{
 
+  box-shadow: 0 -2px 2px 0 rgba(0, 0, 0, 0.2), 0 4px 2px 0 rgba(0, 0, 0, 0.19);
+/*  text-align: center;
+*/  background-color: #ffffff;
+  display: block;
+  position: absolute;
+  border-radius: 10px;
+  margin-top:20px; 
+  min-width: 300px;
+  z-index: 1; 
+
+}
+.buttons_sales{
+   min-width:100px; max-width:100px; 
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2),0 -1px 2px 0 rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  margin-right:20px; 
+border-radius: 10px;
+}
+
+div.stocks_display:hover , .buttons_sales:hover{
+  box-shadow: 0 -3px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 10px 2px rgba(0, 0, 0, 0.19);
+}
+
+.fa {
+  color: yellow;
+}
+.go3d_cool{   
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  border-radius: 10px;
+}
 
 
 </style>
@@ -106,17 +147,17 @@ body {
 {%block inputsearch%}
 
    <div id="searchsales" class="container">
-    
-   <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-2  mr-0" href="#"> {{user.username}}</a>
-      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+<!-- nav -->
+       <nav class="navbar navbar-white fixed-top bg-white flex-md-nowrap p-0 shadow">
+      <a class="navbar col-2  mr-0" href="#"> {{user.username}}</a>
+      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="{% trans 'Search' %}" aria-label="Search">
       <ul class="navbar-nav px-3 col-2">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="/login/">Sign out</a>
+          <a class="nav-link" href="#" ><i class="fa fa-search" aria-hidden="true" style="color:black;"></i></a>
         </li>
       </ul>
     </nav>
-
+<!-- end nav -->
 
   </div>
     {%endblock%}
@@ -127,18 +168,18 @@ body {
 <div id=debittaccount class="container" >
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" id="search">
 
-  <h1 v-cloak >Total: [[ getTotalSales(true) ]]</h1>
+  <h1 v-cloak >{% trans "Total" %}: [[ getTotalSales(true) ]]</h1>
 
-        <span v-cloak class="go3d" v-if="showbusiness" v-on:click="onShowBusiness()">[[selected_business]]</span>
+        <span v-cloak class="go3d" v-if="showbusiness" v-on:click="onShowBusiness()"> [[selected_business]]</span>
 
 <div class="dropdown pull-right selectbuz" v-if="!showbusiness">
       <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <span data-feather="calendar" v-cloak></span>
-                     Business
+                     {% trans "Business" %}
       </button>
 
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-      <span v-on:click="onShowBusiness()"><a class="dropdown-item" href="#" v-on:click="filterAccounts('','All')" >All </a></span>
+      <span v-on:click="onShowBusiness()"><a class="dropdown-item" href="#" v-on:click="filterAccounts('','{% trans 'All' %}')" >{% trans "All" %}  </a></span>
       <span v-on:click="onShowBusiness()"v-for="business in businesses">
 
          <a class="dropdown-item" href="#" v-on:click="filterAccounts(account.id,business.business_name)" v-for ="account in accounts" v-if="account.business == business.id">[[business.business_name]] </a>
@@ -164,28 +205,40 @@ body {
 <!-- end button selection -->
   
 </div>
+<div class=" row stocks_display" v-on:click="displaySalesForm()" style="margin-bottom: 10px;">
+  <i class="fa fa-plus fa-2x"></i>
+</div>
 <div class='row' >
-  <div class='col-lg-8 col-md-8 col-sm-12 col-12'>
-  <div class="row">
+  <div class='col-lg-8 col-md-8 col-sm-12 col-12' style="margin-bottom: 20px;">
+  <div class="row display_sales_form" v-if="dispalysalesform">
        <form class="form-signin" v-on:submit="submitSales">
     {% csrf_token %}
 
-      <div class="form-label-group" v-cloak>
+<!--       <div class="form-label-group" v-cloak>
         <input type="text" id="inputcustomername" class="form-control" placeholder=" Customer Name" v-model='customername' required autofocus>
         <label for="inputcustomername" v-cloak>Customer Name  </label>
       </div>
-      
+       -->
       <div class="form-label-group" v-cloak>
         <input type="number" id="inputsaleamount" class="form-control" placeholder="Amount" v-model='salesamount' required autofocus>
-        <label for="inputsaleamount" v-cloak>Amount </label>
+        <label for="inputsaleamount" v-cloak>{% trans "Amount" %}</label>
       </div>
       <div class="form-label-group" v-cloak>
         <input type="text" id="inputsaledescription" class="form-control" placeholder="Description" v-model='saledescription'  autofocus>
-        <label for="inputsaledescription" v-cloak>Description </label>
+        <label for="inputsaledescription" v-cloak> {% trans "Description" %} </label>
       </div>
-            
-      <button class="btn btn-lg btn-outline-primary btn-block" type="submit" v-cloak>[[new_edit_button]]</button>
+       
+
+      <!-- <button class="btn btn-lg btn-outline-primary btn-block" type="submit" v-cloak>[[new_edit_button]]</button> -->
       <!-- <p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2018</p> -->
+      <div class="row">
+<!--         <div class="buttons_sales text-primary" style="margin-left: 10px;">closing</div>
+ -->         <div class="buttons_sales text-warning" style="margin-left: 180px;" v-cloak v-on:click="submitSales()">
+ <!-- find a way to tranlate this js (vue) variable -->
+{% trans "[[new_edit_button]]" %}
+ </div>
+
+      </div>
     </form>
     
   </div>
@@ -198,13 +251,13 @@ body {
   <thead>
     <tr>
       <th scope="col">#</th>
-      <th scope="col">Date</th>
-      <th scope="col" v-if="selected_business=='All'"> Business</th>
-      <th scope="col">Logged by</th>
-      <th scope="col">Customer Name</th>
-      <th scope="col">Description</th>
-      <th scope="col">type</th>
-      <th scope="col">Cost</th>
+      <th scope="col"> {% trans "Date" %}</th>
+      <th scope="col" v-if="selected_business=='{% trans 'All' %}'">  {% trans "Business" %}</th>
+      <th scope="col"> {% trans "Logged by" %}</th>
+      <th scope="col"> {% trans "Customer Name" %}</th>
+      <th scope="col"> {% trans "Description" %}</th>
+      <th scope="col"> {% trans "type" %} </th>
+      <th scope="col">{% trans "Cost" %} </th>
 
 
       <th></th>
@@ -214,7 +267,7 @@ body {
     <tr v-for="sale in sales" v-if="!sale.debit_credit" v-cloak v-on:dblclick="editSales(sale.id,sale.debit_from,sale.debit_amount,sale.debit_reason,sale.account)">
       <th scope="row" v-cloak>[[sale.id]]</th>
       <td v-cloak> [[parseDate(sale.created_at)]] </td>
-      <td v-cloak v-if="selected_business=='All' && sale.account == account.id" v-for="account in accounts">
+      <td v-cloak v-if="selected_business=='{% trans 'All' %}' && sale.account == account.id" v-for="account in accounts">
       <span v-for="business in businesses" v-if="account.business==business.id">[[business.business_name]]</span></td>
 
       <td v-cloak > [[getUserFristname(sale.user)]] </td>
@@ -238,7 +291,7 @@ body {
 <ul class="list-group">
   <li class="list-group-item d-flex justify-content-between lh-condensed">
       <div>
-        <h6  class="my-0" > Balance </h6>
+        <h6  class="my-0" >  {% trans "Balance" %}</h6>
        
       <div>
        
@@ -252,21 +305,21 @@ body {
 </div>
 
 <!-- begin order -->
-<div class='col-lg-4 col-md-4 col-sm-12 col-12' style="margin-top: 20px; max-height: 800px;
+<div class='col-lg-4 col-md-4 col-sm-12 col-12' style="margin-top: 0px; max-height: 800px;
   overflow-y: auto;
   overflow-x: auto;">
 
 <div  style="margin-bottom: 20px;">
-  <ul class="list-group" >
+  <ul class="list-group" style="margin-bottom: 10px;" >
   <li class="list-group-item d-flex justify-content-between lh-condensed">
       <div>
    
-        <h4  class="" v-cloak><!-- [[customer.customer_name]] --> Pending Sales</h4>
+        <h4  class="" v-cloak><!-- [[customer.customer_name]] -->  {% trans "Pending Sales" %}</h4>
         
       </div>
       <div>
 
-      <h4 class="text-muted align-right" v-cloak> <!--  [[customer_total_order(customer)]] -->[[getTotalCreditSales()]]</h4>
+      <h4 class="text-warning align-right" v-cloak> <!--  [[customer_total_order(customer)]] -->[[getTotalCreditSales()]]</h4>
         
       </div>
   </li>
@@ -276,15 +329,15 @@ body {
 
    <ul class="list-group">
 
-      <li class="list-group-item d-flex justify-content-between lh-condensed" v-for= "sale in sales"  v-if="sale.debit_credit" v-on:dblclick="editSales(sale.id,sale.debit_from,sale.debit_amount,sale.debit_reason,sale.account)" v-cloak>
+      <li class="list-group-item d-flex justify-content-between lh-condensed go3d_cool" v-for= "sale in sales"  v-if="sale.debit_credit" v-on:dblclick="editSales(sale.id,sale.debit_from,sale.debit_amount,sale.debit_reason,sale.account)" v-cloak>
                 <div class="container">
                   <h6  class="my-0" v-cloak>[[sale.debit_from]] </h6>
                   <small class="text-muted" v-cloak> [[sale.debit_reason]] </small>
                 </div>
-                  <div class="container" v-cloak v-if="selected_business=='All' && sale.account == account.id" v-for="account in accounts">
+                  <div class="container" v-cloak v-if="selected_business=='{% trans 'All' %}' && sale.account == account.id" v-for="account in accounts">
       <span v-for="business in businesses" v-if="account.business==business.id">[[business.business_name]]</span></div>
                 <div class="container">
-                <span v-cloak class="text-muted" >Tsh [[sale.debit_amount]] </span>
+                <span v-cloak class="text-warning" >Tsh [[sale.debit_amount]] </span>
 
 
                 <br>
@@ -356,10 +409,17 @@ selected_business:'All',
 showbusiness:true,
 userid:'{{user.id}}',
 mypeople:'',
+dispalysalesform:false,
+current_language:'{{ LANGUAGE_CODE }}',
+
 
   },
 
   methods:{
+    displaySalesForm:function(){
+      if(this.dispalysalesform)this.dispalysalesform=false;
+      else this.dispalysalesform=true;
+    },
     // to be changed such that it is used to dispaly  all or a certain debit account
     // and another function which will use the default account fields in the db shall be used foe debit entries
     filterAccounts:function(val,businesname){
@@ -418,14 +478,14 @@ mypeople:'',
       if(!this.edit){
         if(this.useraccount==""){
           if(this.number_of_accounts>=1)
-            $.notify("select an business","error")
+            $.notify("select a business","error")
             else{
         $.notify("business not yet created","error")
         $.notify("Go to settings \n to create business","info")
 
             }
         }else{
-            this.$http.post('/api/debitaccount/',{'account':this.useraccount,'debit_from':this.customername,'debit_reason':this.saledescription,'debit_amount':this.salesamount,'debit_type':this.salestype,'user':this.userid})
+            this.$http.post('/api/debitaccount/',{'account':this.useraccount,'debit_from':'none','debit_reason':this.saledescription,'debit_amount':this.salesamount,'debit_type':this.salestype,'user':this.userid})
        .then(function(response){
         // this.items=response.data
         this.title=response.data
@@ -443,7 +503,7 @@ mypeople:'',
 
       }else{
 
-        this.$http.put('/api/debitaccount/'+this.saleid+'/',{'account':this.useraccount,'debit_from':this.customername,'debit_reason':this.saledescription,'debit_amount':this.salesamount,'debit_type':this.salestype,'user':this.userid})
+        this.$http.put('/api/debitaccount/'+this.saleid+'/',{'account':this.useraccount,'debit_from':'none','debit_reason':this.saledescription,'debit_amount':this.salesamount,'debit_type':this.salestype,'user':this.userid})
        .then(function(response){
         // this.items=response.data
         this.title=response.data
@@ -470,7 +530,7 @@ mypeople:'',
       this.$http.get('/api/debitaccount')
      .then(function(response){
       this.sales=response.data
-      if(this.selected_business!="All")
+      if(this.selected_business!=this.matchLanguage("All"))
       this.sales=this.filterBusinessSales(this.sales)
 
       this.getMyPeople()
@@ -562,6 +622,20 @@ mypeople:'',
        })
 
     },
+    matchLanguage:function(word){
+      new_word=word
+        if (word=="All"){
+          if(this.current_language=='en'){
+              new_word=word      
+          }
+          else if(this.current_language=='sw'){
+              new_word="Zote"
+          }
+        
+        }
+        return new_word
+
+    },
     declineSale:function(id){
 
 
@@ -569,7 +643,16 @@ mypeople:'',
     },
 
     beforeMount(){
-
+      console.log(this.current_language)
+    if(this.current_language=='en'){
+      console.log('got english')
+      
+      this.selected_business="All"
+    }
+    else if(this.current_language=='sw'){
+      console.log('got swahili')
+      this.selected_business="Zote"
+    }
     this.getSales()
     this.getAccount()
     this.getBusiness()

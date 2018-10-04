@@ -2,7 +2,11 @@
 
 {%extends 'base.html'%}
 
+{% load i18n %}
+
 {%block style%}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <style type="text/css">
 	    :root {
   --input-padding-x: .75rem;
@@ -92,9 +96,56 @@ body {
   text-align: center;
   padding: 10px;}
 
-
+/* box-shadow lef-right, up-down,blur, spread, color*/
+.expene_duration{
+  min-width:100px; max-width:100px; 
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2),0 -1px 2px 0 rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  margin-right:20px; 
+border-radius: 30px;
 }
 
+.display_duration{
+
+  box-shadow: 0 -2px 2px 0 rgba(0, 0, 0, 0.2), 0 4px 2px 0 rgba(0, 0, 0, 0.19);
+/*  text-align: center;
+*/  background-color: #ffffff;
+  display: block;
+  position: absolute;
+  border-radius: 10px;
+  margin-top:20px; 
+  min-width: 300px;
+  z-index: 1; 
+
+}
+div.expene_duration:hover , .add_display:hover , .buttons_expense:hover{
+  box-shadow: 0 -3px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 10px 2px rgba(0, 0, 0, 0.19);
+}
+.fa {
+  color: yellow;
+}
+
+  .add_display{
+  min-width:50px; max-width:50px; 
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2),0 -1px 2px 0 rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  margin-right:20px; 
+border-radius: 25px;
+}
+
+.buttons_expense{
+   min-width:100px; max-width:100px; 
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2),0 -1px 2px 0 rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  margin-right:20px; 
+border-radius: 10px;
+}
+
+.go3d_cool{   
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  border-radius: 10px;
+}
 
 </style>
 {%endblock%}
@@ -102,12 +153,12 @@ body {
 
     <div id="searchexpense" class="container">
     
-   <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-2  mr-0" href="#"> {{user.username}}</a>
-      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+   <nav class="navbar navbar-white fixed-top bg-white flex-md-nowrap p-0 shadow">
+      <a class="navbar col-2  mr-0" href="#"> {{user.username}}</a>
+      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="{% trans 'Search' %}" aria-label="Search">
       <ul class="navbar-nav px-3 col-2">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="/login/">Sign out</a>
+          <a class="nav-link" href="#" ><i class="fa fa-search" aria-hidden="true" style="color:black;"></i></a>
         </li>
       </ul>
     </nav>
@@ -119,17 +170,17 @@ body {
 {%block content%}
 <div id='creditapp'>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" id="search">
-	<h1 v-cloak >Total: [[getTotalCredit()]] </h1>
+	<h1 v-cloak > {% trans "Total" %}: [[number_to_cash(getTotalCredit().total_amount)]] </h1>
 <span v-cloak class="go3d" v-if="showbusiness" v-on:click="onShowBusiness()">[[selected_business]]</span>
 
 <div class="dropdown pull-right selectbuz" v-if="!showbusiness">
       <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <span data-feather="calendar" v-cloak></span>
-                     Business
+                     {% trans "Business" %}
       </button>
 
       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-      <span v-on:click="onShowBusiness()"><a class="dropdown-item" href="#" v-on:click="filterAccounts('','All')" >All </a></span>
+      <span v-on:click="onShowBusiness()"><a class="dropdown-item" href="#" v-on:click="filterAccounts('','{% trans 'All' %}')" >{% trans "All" %} </a></span>
       <span v-on:click="onShowBusiness()"v-for="business in businesses">
 
          <a class="dropdown-item" href="#" v-on:click="filterAccounts(account.id,business.business_name)" v-for ="account in accounts" v-if="account.business == business.id">[[business.business_name]] </a>
@@ -142,48 +193,84 @@ body {
 	
 </div>
 
+<div class="row" style="margin-bottom: 20px;">
+
+<div class="add_display" v-on:click="displayExpenseForm()">
+  <i class="fa fa-plus fa-2x"></i>
+</div>
+
+<!-- <div class="expene_duration" id="duration_daily" v-on:click="durationName('daily')">
+  <i class="fa fa-database"></i>
+  Daily
+</div>
+ <div class="expene_duration" v-on:click="durationName('fixed')">
+  <i class="fa fa-android"></i>
+  Fixed
+</div>
+ <div class="expene_duration" v-on:click="durationName('custom')">
+  <i class="fa fa-school"></i>
+  Custom
+</div> -->
+
+
+</div>
 
 
 <div class="row">
-<div class="col-lg-8 col-md-8 col-sm-12 col-12">
-             <form class="form-signin" v-on:submit="checkSubmitExpense">
-    {% csrf_token %}
-
+<div class="col-lg-12 col-md-12 col-sm-12 col-12 ">
+<div class="display_duration" v-if="duration_selected">
+ <form class="form-signin" v-on:submit="checkSubmitExpense">
+    {% csrf_token %}      
       <div class="form-label-group">
         <input type="text" id="inputexpensename" class="form-control" placeholder=" Spent On"  required autofocus v-model="expensename">
-        <label for="inputexpensename">Spent On </label>
+        <label for="inputexpensename"> {% trans "Spent On" %}</label>
       </div>
 
-      <div class="form-label-group">
+ <!--      <div class="form-label-group">
         <input type="text" id="inputexpensereceiver" class="form-control" placeholder="Received Payment"   autofocus v-model="expensereceiver">
         <label for="inputexpensereceiver">Received Payment </label>
-      </div>
+      </div> -->
 
     <div class="form-label-group">
         <input type="number" id="inputexpenseamount" class="form-control" placeholder=" Amount Spent"   autofocus v-model="expenseamount">
-        <label for="inputexpenseamount">Amount Spent </label>
+        <label for="inputexpenseamount"> {% trans "Amount Spent" %} </label>
+      </div>
+      <div class="form-label-group" v-if="duration_name=='custom'">
+        <input type="number" id="inputexpensetime" class="form-control" placeholder=" Number of Days"   autofocus v-model="expensetime">
+        <label for="inputexpensetime"> {% trans "Days" %}</label>
+      </div>
+<!-- 
+      <button v-bind:class="{'btn':true,'btn-lg':true,'btn-block':true,'btn-outline-primary':(button_create_edit_expense=='New Expense'),'btn-outline-dark':(button_create_edit_expense!='New Expense')}" type="submit" v-cloak>[[button_create_edit_expense]]</button> -->
+      <!-- <p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2018</p> -->
+
+      <div class="row">
+        <div class="buttons_expense text-primary" style="margin-left: 10px;" v-on:click="checkBeforeSubmitExpense('daily')"> {% trans "daily" %}</div>
+         <div class="buttons_expense text-warning" style="margin-left: 60px;" v-on:click="checkBeforeSubmitExpense('custom')"> {% trans "custom" %}</div>
       </div>
 
-      <button v-bind:class="{'btn':true,'btn-lg':true,'btn-block':true,'btn-outline-primary':(button_create_edit_expense=='New Expense'),'btn-outline-dark':(button_create_edit_expense!='New Expense')}" type="submit" v-cloak>[[button_create_edit_expense]]</button>
-      <!-- <p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2018</p> -->
     </form>
-  
+
 </div>
+
+</div>
+
+<!--begin todays expense -->
+
 <div class="col-lg-4 col-md-4 col-sm-12 col-12" >
 
 <!-- new -->
 
 <div  style="margin-bottom: 20px;">
-  <ul class="list-group" >
+  <ul class="list-group" style="margin-bottom: 10px;">
   <li class="list-group-item d-flex justify-content-between lh-condensed">
       <div>
    
-        <h4  class="" v-cloak><!-- [[customer.customer_name]] --> Expenses</h4>
+        <h4  class="" v-cloak><!-- [[customer.customer_name]] --> {% trans "Today's Expenses" %}</h4>
         
       </div>
       <div>
 
-      <h4 class="text-muted align-right" v-cloak> <!--  [[customer_total_order(customer)]] -->[[getTotalCredit()]]</h4>
+      <h4 class="text-primary align-right" v-cloak> <!--  [[customer_total_order(customer)]] -->[[number_to_cash(getTotalCredit("today").daily_amount)]]</h4>
         
       </div>
   </li>
@@ -193,15 +280,140 @@ body {
 
    <ul class="list-group">
 
-      <li class="list-group-item d-flex justify-content-between lh-condensed" v-for="expense in expenses"  v-cloak v-on:dblclick="editExpense(expense.id,expense.account,expense.credit_reason,expense.credit_to,expense.credit_amount,expense.credit_type)" v-cloak>
+      <li class="list-group-item d-flex justify-content-between lh-condensed go3d_cool" v-for="expense in expenses"  v-cloak v-on:dblclick="editExpense(expense.id,expense.account,expense.credit_reason,expense.credit_to,expense.credit_amount,expense.credit_type)" v-cloak v-if="expenseForToday(expense)">
                 <div class="container">
                   <h6  class="my-0" v-cloak>[[expense.credit_to]] </h6>
                   <small class="text-muted" v-cloak> [[expense.credit_reason]] </small>
                 </div>
-                <div class="container" v-cloak v-if="selected_business=='All' && expense.account == account.id" v-for="account in accounts">
+                <div class="container" v-cloak v-if="selected_business=='{% trans 'All' %}' && expense.account == account.id" v-for="account in accounts">
       <span v-for="business in businesses" v-if="account.business==business.id">[[business.business_name]]</span></div>
                 <div class="co">
-                <span v-cloak class="text-muted" >Tsh [[expense.credit_amount]] </span>
+                <span v-cloak class="text-primary" >Tsh [[getAmountGlobal(expense)]] </span>
+
+                <br>
+                <!-- <span aria-hidden="true"  v-if="customer.id == sale.customer" v-cloak>[[customer.customer_name]]</span> -->
+                <button type="button" class="close" aria-label="Close" v-on:click="deleteExpenses(expense.id)">
+
+                <span aria-hidden="true">&times;</span>
+          </button>
+         
+                  
+                </div>
+                
+              </li>
+
+   </ul>
+
+</div>
+  
+
+</div>
+
+<!-- end new -->
+
+
+  
+</div>
+
+<!-- end todays expense -->
+
+
+<!-- begin daily expense -->
+<div class="col-lg-4 col-md-4 col-sm-12 col-12" >
+
+<!-- new -->
+
+<div  style="margin-bottom: 20px;">
+  <ul class="list-group" style="margin-bottom: 10px;">
+  <li class="list-group-item d-flex justify-content-between lh-condensed">
+      <div>
+   
+        <h4  class="" v-cloak><!-- [[customer.customer_name]] -->  {% trans "Daily Expenses" %}</h4>
+        
+      </div>
+      <div>
+
+      <h4 class="text-muted align-right" v-cloak> <!--  [[customer_total_order(customer)]] -->[[number_to_cash(getTotalCredit().daily_amount)]]</h4>
+        
+      </div>
+  </li>
+
+</ul> 
+<div >
+
+   <ul class="list-group">
+
+      <li class="list-group-item d-flex justify-content-between lh-condensed go3d_cool" v-for="expense in expenses"  v-cloak v-on:dblclick="editExpense(expense.id,expense.account,expense.credit_reason,expense.credit_to,expense.credit_amount,expense.credit_type)" v-cloak>
+                <div class="container">
+                  <h6  class="my-0" v-cloak>[[expense.credit_to]] </h6>
+                  <small class="text-muted" v-cloak> [[expense.credit_reason]] </small>
+                </div>
+                <div class="container" v-cloak v-if="selected_business=='{% trans 'All' %}' && expense.account == account.id" v-for="account in accounts">
+      <span v-for="business in businesses" v-if="account.business==business.id">[[business.business_name]]</span></div>
+                <div class="co">
+                <span v-cloak class="text-muted" >Tsh [[getAmountGlobal(expense)]] </span>
+
+                <br>
+                <!-- <span aria-hidden="true"  v-if="customer.id == sale.customer" v-cloak>[[customer.customer_name]]</span> -->
+                <button type="button" class="close" aria-label="Close" v-on:click="deleteExpenses(expense.id)">
+
+                <span aria-hidden="true">&times;</span>
+          </button>
+         
+                  
+                </div>
+                
+              </li>
+
+   </ul>
+
+</div>
+  
+
+</div>
+
+<!-- end new -->
+
+
+  
+</div>
+
+<!-- end daily expense -->
+
+<!-- begin total expenses -->
+<div class="col-lg-4 col-md-4 col-sm-12 col-12" >
+
+<!-- new -->
+
+<div  style="margin-bottom: 20px;">
+  <ul class="list-group" style="margin-bottom: 10px;">
+  <li class="list-group-item d-flex justify-content-between lh-condensed">
+      <div>
+   
+        <h4  class="" v-cloak><!-- [[customer.customer_name]] --> {% trans "Total Expenses" %} </h4>
+        
+      </div>
+      <div>
+
+      <h4 class="text-warning align-right" v-cloak> <!--  [[customer_total_order(customer)]] -->[[number_to_cash(getTotalCredit().total_amount)]]</h4>
+        
+      </div>
+  </li>
+
+</ul> 
+<div >
+
+   <ul class="list-group">
+
+      <li class="list-group-item d-flex justify-content-between lh-condensed go3d_cool" v-for="expense in expenses"  v-cloak v-on:dblclick="editExpense(expense.id,expense.account,expense.credit_reason,expense.credit_to,expense.credit_amount,expense.credit_type)" v-cloak>
+                <div class="container">
+                  <h6  class="my-0" v-cloak>[[expense.credit_to]] </h6>
+                  <small class="text-muted" v-cloak> [[expense.credit_reason]] </small>
+                </div>
+                <div class="container" v-cloak v-if="selected_business=='{% trans 'All' %}' && expense.account == account.id" v-for="account in accounts">
+      <span v-for="business in businesses" v-if="account.business==business.id">[[business.business_name]]</span></div>
+                <div class="co">
+                <span v-cloak class="text-warning" >Tsh [[expense.credit_amount]] </span>
 
                 <br>
                 <!-- <span aria-hidden="true"  v-if="customer.id == sale.customer" v-cloak>[[customer.customer_name]]</span> -->
@@ -226,8 +438,14 @@ body {
 
   
 </div>
+
+<!-- end total expenses -->
   
 
+<!-- TO DISPLAY INFO ON LIST CLICK -->
+<div class="col-lg-4 col-md-4 col-sm-12 col-12">
+</div>
+<!-- END TO DISPLAY INFO ON LIST CLICK -->
 </div>
 
 
@@ -237,6 +455,8 @@ body {
 {%endblock%}
 
 {%block script%}
+
+
   <script >
 
 wm = new Vue({
@@ -247,6 +467,8 @@ wm = new Vue({
     title:''
   }
   ,methods:{
+
+  
     getExpense:function(){
      //  let api_url='/api/expense';
      //  if(this.searchfiledexpense!==''||this.searchfiledexpense!==null){
@@ -291,10 +513,66 @@ useraccount:'',
 showbusiness:true,
 number_of_accounts:'',
 userid:'{{user.id}}',
+duration_selected:false,
+duration_name:'',
+expensetime:0,
+daily_equivalent_cost:0,
+current_language:'{{ LANGUAGE_CODE }}',
 
 
   },
   methods:{
+    expenseForToday:function(expense){
+      var today=moment();
+       return moment(expense.created_at).isSame(today,'day');
+    },
+    toggleForm:function(){
+      if(this.duration_selected)this.duration_selected=false;
+      else this.duration_selected=true;
+    },
+    checkBeforeSubmitExpense:function(duration_name){
+
+      if(duration_name=='daily' && this.duration_name=='daily'){
+        // if previously daily was selected and now daily is selected then you can sublmit the form then toglle the  form
+        this.checkSubmitExpense();
+        this.duration_selected=false;
+      }else if(duration_name=='daily' && this.duration_name!='daily'){
+        // if previously daily was not selected
+        // but it is selected now
+        // select it
+        this.duration_name='daily'
+      }else if(duration_name=='custom' && this.duration_name=='custom'){
+        this.checkSubmitExpense();
+        this.duration_selected=false;
+        this.duration_name='daily';
+      }else if(duration_name=='custom' && this.duration_name!='custom'){
+        this.duration_name='custom';
+      }
+
+    },
+    displayExpenseForm:function(){
+          this.duration_name='daily'
+        if(this.duration_selected)this.duration_selected=false;
+         else this.duration_selected=true;
+    },
+      getDailyValue:function(duration_name){
+          if(duration_name=="daily"){
+            this.daily_equivalent_cost=this.expenseamount
+          }else if(duration_name=="custom"){
+            this.daily_equivalent_cost=(this.expenseamount/this.expensetime)
+          }else if (duration_name=="fixed"){
+            // expnse time is pre-fixed to 6 month (180 dyas)
+            this.expensetime=180
+            this.daily_equivalent_cost=(this.expenseamount/this.expensetime)
+          }  
+
+      },
+
+      durationName:function(duration_name){        
+         this.duration_name=duration_name;
+        
+      
+    },
      filterAccounts:function(val,businesname){
       this.useraccount=val
       this.selected_business=businesname
@@ -311,16 +589,87 @@ userid:'{{user.id}}',
       })
       return newsale
     },
-    getTotalCredit:function(){
+    getAmountGlobal:function(expense){
       var amount=0;
+      if (expense.credit_duration_option!="daily"){
+        // get the daily cost equivalet
+      var daily_cost=expense.credit_daily_equivalent_cost
+      // get when the expense was first logged
+      var date_created=moment(expense.created_at)
+      // claculate time elapsed since first the log in days
+      var now=moment(new Date());
+      var days_duration=Math.round(moment.duration(date_created.diff(now)).asDays())
+      // get the required duration of payment
+      var expense_duration=expense.credit_duration
+      // get the reaminder of days to terminating deduction
+      var days_to_end=expense_duration-days_duration+1
+      if(days_to_end<=0)amount= 0;
+      else amount= (days_duration+1)*daily_cost;
+
+      }else{
+        amount= expense.credit_amount;
+      }
+
+      return Math.round(amount);
+      
+    },
+    getTotalCredit:function(day="any"){
+      var total_amount=0;
+      var daily_amount=0;
+
+      function getAmount(expense){
+        var amount=0;
+      if (expense.credit_duration_option!="daily"){
+        // get the daily cost equivalet
+      var daily_cost=expense.credit_daily_equivalent_cost
+      // get when the expense was first logged
+      var date_created=moment(expense.created_at)
+      // claculate time elapsed since first the log in days
+
+      var now=moment(new Date());
+      var days_duration=Math.round(moment.duration(now.diff(date_created)).asDays());
+      // get the required duration of payment
+      var expense_duration=expense.credit_duration
+      // get the reaminder of days to terminating deduction
+
+      // NOte one is added onto duration so as to move to remove Zero day presence
+      // thus we always strat with day 1 instead of a zero day difference
+      var days_to_end=expense_duration-days_duration+1
+
+      if(days_to_end<0){amount= 0;}
+      else {amount= (days_duration+1)*daily_cost;
+    
+      }
+
+      }else{
+        amount= expense.credit_amount;
+      }
+
+      return amount;
+      }
+
+      function isEexpeseToday(expense){
+        var today=moment();
+       return moment(expense.created_at).isSame(today,'day');
+      }
+
      $.each(this.expenses, function(key, value) {
-           
-            amount+=value.credit_amount
-             
+            total_amount+=value.credit_amount
+            if(day=="today"){
+              if(isEexpeseToday(value))
+             daily_amount+=getAmount(value); 
+           }else daily_amount+=getAmount(value);
+            
+            
          });
      
-     amount = 'Tsh' + amount.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
-     return amount;
+     return{"daily_amount":Math.round(daily_amount),"total_amount":total_amount};
+     
+    },
+      number_to_cash:function(number,currency='Tsh'){
+      return currency + number.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+     
+     
     },
   	parseDate:function(date){
   		
@@ -328,12 +677,10 @@ userid:'{{user.id}}',
 
   	},
   	checkSubmitExpense:function(e){
-
-  		
   			if(!this.edit){
         if(this.useraccount==""){
           if(this.number_of_accounts>=1)
-            $.notify("select an business","error")
+            $.notify("select a business","error")
             else{
         $.notify("business not yet created","error")
         $.notify("Go to settings \n to create business","info")
@@ -341,7 +688,9 @@ userid:'{{user.id}}',
             }
         }else{
 
-        this.$http.post('/api/creditaccount/',{'credit_reason':this.expensename,'credit_to':this.expensereceiver,'credit_amount':this.expenseamount,'account':this.useraccount,'user':this.userid})
+        this.getDailyValue(this.duration_name)
+    
+        this.$http.post('/api/creditaccount/',{'credit_reason':this.expensename,'credit_to':'none','credit_amount':this.expenseamount,'account':this.useraccount,'user':this.userid,'credit_duration_option':this.duration_name,'credit_duration':this.expensetime,'credit_daily_equivalent_cost':this.daily_equivalent_cost})
        .then(function(response){
         // this.items=response.data
         this.title=response.data
@@ -350,7 +699,12 @@ userid:'{{user.id}}',
         this.expensereceiver='';
         this.expensedescription='';
         this.expenseamount='';
+        this.daily_equivalent_cost=0;
+        this.duration_name='';
+        this.expensetime=0;
+
          this.getExpenses();
+
 
         // alert('response')
        })
@@ -360,7 +714,7 @@ userid:'{{user.id}}',
 
      }
    }else{
-    this.$http.put('/api/creditaccount/'+this.currentexpenseid+'/',{'credit_reason':this.expensename,'credit_to':this.expensereceiver,'credit_amount':this.expenseamount,'account':this.useraccount,'user':this.userid})
+    this.$http.put('/api/creditaccount/'+this.currentexpenseid+'/',{'credit_reason':this.expensename,'credit_to':'none','credit_amount':this.expenseamount,'account':this.useraccount,'user':this.userid})
        .then(function(response){
         // this.items=response.data
         this.title=response.data
@@ -387,7 +741,7 @@ userid:'{{user.id}}',
      this.$http.get('/api/creditaccount')
      .then(function(response){
       this.expenses=response.data
-       if(this.selected_business!="All")
+       if(this.selected_business!=this.matchLanguage("All"))
       this.expenses=this.filterBusinessExpenses(this.expenses)
      })
      .catch(function(error){
@@ -444,9 +798,32 @@ userid:'{{user.id}}',
         this.title='error deleting expenses'
        })
 
-    }
+    },matchLanguage:function(word){
+      new_word=word
+        if (word=="All"){
+          if(this.current_language=='en'){
+              new_word=word      
+          }
+          else if(this.current_language=='sw'){
+              new_word="Zote"
+          }
+        
+        }
+        return new_word
+
+    },
 
   },beforeMount(){
+    console.log(this.current_language)
+    if(this.current_language=='en'){
+      console.log('got english')
+      
+      this.selected_business="All"
+    }
+    else if(this.current_language=='sw'){
+      console.log('got swahili')
+      this.selected_business="Zote"
+    }
   	this.getExpenses()
   	this.getAccount()
     this.getBusiness()
@@ -454,5 +831,17 @@ userid:'{{user.id}}',
 
 })
 
+  </script>
+  <script type="text/javascript">
+    window.onload=function(){
+      // JBIC
+      // daily_select=document.getElementById("duration_daily");
+      // daily_select.onclick=function(){
+      //   node=document.getElementsByClassName("display_duration")[0];
+      //   node.style.display="none";
+      // };
+
+
+    };
   </script>
 {%endblock%}
