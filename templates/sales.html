@@ -18,7 +18,7 @@
 html,
 body {
   height: 100%;
-
+  zoom: 90%;
 }
 
 /*body {
@@ -146,11 +146,11 @@ div.stocks_display:hover , .buttons_sales:hover{
 {%endblock%}
 {%block inputsearch%}
 
-   <div id="searchsales" class="container">
+   <div id="searchsalesid" class="container">
 <!-- nav -->
        <nav class="navbar navbar-white fixed-top bg-white flex-md-nowrap p-0 shadow">
       <a class="navbar col-2  mr-0" href="#"> {{user.username}}</a>
-      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="{% trans 'Search' %}" aria-label="Search">
+      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="{% trans 'Search' %}" aria-label="Search" v-model="searchsalesmodel" v-on:keyup.enter="searchSales">
       <ul class="navbar-nav px-3 col-2">
         <li class="nav-item text-nowrap">
           <a class="nav-link" href="#" ><i class="fa fa-search" aria-hidden="true" style="color:black;"></i></a>
@@ -168,7 +168,7 @@ div.stocks_display:hover , .buttons_sales:hover{
 <div id=debittaccount class="container" >
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" id="search">
 
-  <h1 v-cloak >{% trans "Total" %}: [[ getTotalSales(true) ]]</h1>
+  <h3 v-cloak >{% trans "Total" %}: [[ getTotalSales(true) ]]</h3>
 
         <span v-cloak class="go3d" v-if="showbusiness" v-on:click="onShowBusiness()"> [[selected_business]]</span>
 
@@ -254,8 +254,8 @@ div.stocks_display:hover , .buttons_sales:hover{
       <th scope="col"> {% trans "Date" %}</th>
       <th scope="col" v-if="selected_business=='{% trans 'All' %}'">  {% trans "Business" %}</th>
       <th scope="col"> {% trans "Logged by" %}</th>
-      <th scope="col"> {% trans "Customer Name" %}</th>
-      <th scope="col"> {% trans "Description" %}</th>
+<!--       <th scope="col"> {% trans "Customer Name" %}</th>
+ -->      <th scope="col"> {% trans "Description" %}</th>
       <th scope="col"> {% trans "type" %} </th>
       <th scope="col">{% trans "Cost" %} </th>
 
@@ -271,8 +271,8 @@ div.stocks_display:hover , .buttons_sales:hover{
       <span v-for="business in businesses" v-if="account.business==business.id">[[business.business_name]]</span></td>
 
       <td v-cloak > [[getUserFristname(sale.user)]] </td>
-      <td v-cloak>[[sale.debit_from]]</td>
-      <td v-cloak>[[sale.debit_reason]]</td>
+<!--       <td v-cloak>[[sale.debit_from]]</td>
+ -->      <td v-cloak>[[sale.debit_reason]]</td>
       <td v-cloak>[[sale.debit_type]]</td>
       <td v-cloak>[[sale.debit_amount]]</td>
       <td><button type="button" class="close" aria-label="Close" v-on:click="deleteSale(sale.id)">
@@ -385,7 +385,118 @@ div.stocks_display:hover , .buttons_sales:hover{
 </script>
   <script >
 
+new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#searchsalesid',
+  data:{
+    reference_sales:'',
+searchsalesmodel:"",
+  },
+  methods:{
+    searchSales:function(){
+    // o.find(function(el){return el==5});
 
+      //  a function to find an id in a list of ids
+      function find_id(ids,findid){
+        if(ids.find(function(id){return id==findid})==null)
+          return false
+        else return true
+      }
+      
+      // linking the current vue instance with the vsale vue instance
+      var sales=vsale.reference_sales
+      var businesses =vsale.businesses
+      var accounts = vsale.accounts
+      var users=vsale.mypeople
+
+      // testing if the search bar is empaty, if so just return the original sales list otherwise seaarch throught the browser memory 
+      if(this.searchsalesmodel.trim()==="")
+         vsale.sales=sales
+       else{
+
+      var li=this.searchsalesmodel.trim().split(" ")
+
+
+      // creating a llist of words that need to be seached , from the word passed in the search bar
+      var newwords=[]
+      for(var i=0;i<li.length;i++){
+        if(li[i].length>0)
+          {
+            console.log(li[i])
+            newwords.push(li[i])
+          }
+        }
+
+      
+      function find_business(business_name,acc_id){
+        // first searching throught the businesses for a typed in bussiness name 
+        var newbusinesses
+        newbusinesses = businesses.filter(function(busness){
+        return busness.business_name.toLowerCase().trim() == business_name.toLowerCase().trim()
+        
+         })
+
+      // createing an array of ids for the caught bussiness names for corresponding accounts
+      var account_ids=[]
+      $.each(newbusinesses, function(key, buz) {
+           $.each(accounts, function(key, acc) {
+            if(acc.business==buz.id){
+              account_ids.push(acc.id)
+            }
+         });
+
+         });
+
+      return find_id(account_ids,acc_id)
+
+      }
+
+      function find_user(username,userid){
+        var newusers
+        console.log("users")
+      console.log(users)
+        newusers = users.filter(function(user){
+        return user.first_name.toLowerCase().trim() == username.toLowerCase().trim()
+         })
+
+        var userids=[]
+      $.each(newusers, function(key, userz) {
+          userids.push(userz.id)
+         });
+
+      // checking if the current users first name is equal to the name passed into the function, if yes add the users id into the array
+      if(username.toLowerCase().trim()==vsale.userfirstname)userids.push(vsale.userid)
+
+       return find_id(userids,userid)
+
+      }
+
+      // function find_date(date){
+
+      //   // moment('2018-10-02').isAfter(moment('2018-10-01'))
+
+      // }
+
+      var newsales
+      for(var i=0;i<newwords.length;i++ ){
+        newsales = sales.filter(function(sale){
+        return (sale.debit_amount == newwords[i] || sale.debit_reason.toLowerCase().trim() == newwords[i].toLowerCase().trim() || sale.debit_type.toLowerCase().trim() == newwords[i].toLowerCase().trim()||find_business(newwords[i],sale.account)||find_user(newwords[i],sale.user)||moment(sale.created_at).isSame(moment(newwords[i]),'day'))
+        
+      })
+      sales=newsales
+      }
+
+      // updating the sales in the vsales vue instance
+      
+      vsale.sales=newsales
+
+
+       }
+
+      
+    },
+  }
+})
 
 
 vsale=new Vue({
@@ -408,14 +519,16 @@ businesses:'',
 selected_business:'All',
 showbusiness:true,
 userid:'{{user.id}}',
+userfirstname:'{{user.first_name}}',
 mypeople:'',
 dispalysalesform:false,
 current_language:'{{ LANGUAGE_CODE }}',
-
-
+reference_sales:'',
+searchsalesmodel:"",
   },
 
   methods:{
+
     displaySalesForm:function(){
       if(this.dispalysalesform)this.dispalysalesform=false;
       else this.dispalysalesform=true;
@@ -439,6 +552,7 @@ current_language:'{{ LANGUAGE_CODE }}',
       this.showbusiness=!this.showbusiness
     },
      getAccount:function(){
+      var newaccount
      this.$http.get('/api/account')
      .then(function(response){
       this.accounts=response.data
@@ -447,6 +561,16 @@ current_language:'{{ LANGUAGE_CODE }}',
            count+=1;
          });
       this.number_of_accounts=count
+
+      // filtering accounts that are not fully filled
+      // and are have lasted for more than 3 days
+
+      newaccount = this.accounts.filter(function(account){
+        return !(moment(account.created_at).isAfter(moment(account.created_at).add(3,'d')) &&( account.bank_account_name==null ||account.bank_account_number==null || account.bank_account_name=="" || account.bank_account_number==""))
+        
+      })
+
+      this.accounts=newaccount
       
      })
      .catch(function(error){
@@ -532,7 +656,7 @@ current_language:'{{ LANGUAGE_CODE }}',
       this.sales=response.data
       if(this.selected_business!=this.matchLanguage("All"))
       this.sales=this.filterBusinessSales(this.sales)
-
+      this.reference_sales=this.sales
       this.getMyPeople()
      })
      .catch(function(error){

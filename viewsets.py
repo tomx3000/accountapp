@@ -1,10 +1,10 @@
 from rest_framework import viewsets,filters
-from .models import Business,Account,DebitAccount,CreditAccount,User,Ownership
+from .models import Business,Account,DebitAccount,CreditAccount,User,Ownership,StockCollection
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import permissions
 from django.core.mail import send_mail
-from .serializers import UserSerializer,AccountSerializer,CreditAccountSerializer,DebitAccountSerializer,BusinessSerializer,OwnershipSerializer
+from .serializers import UserSerializer,AccountSerializer,CreditAccountSerializer,DebitAccountSerializer,BusinessSerializer,OwnershipSerializer,StockCollectionSerializer
 
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -128,7 +128,19 @@ class CreditAccountViewSet(viewsets.ModelViewSet):
 		return Response(serializer.data)
 
 
+class StockViewSet(viewsets.ModelViewSet):
+	queryset=StockCollection.objects.all()
+	serializer_class=StockCollectionSerializer
+	authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+	permission_classes=(permissions.IsAuthenticatedOrReadOnly,)
 
+	def list(self,request):
+		userid=request.user.id
+		user=User.objects.get(id=userid)
+		qs=StockCollection.objects.filter(business__owners=user)
+		serializer=StockCollectionSerializer(qs,many=True)
+
+		return Response(serializer.data)
 
     
 	

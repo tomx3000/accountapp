@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Business,Account,DebitAccount,CreditAccount,User,Ownership
+from .models import Business,Account,DebitAccount,CreditAccount,User,Ownership,StockCollection
 # from django.contrib.auth.models import User 
 class OwnershipSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -32,7 +32,10 @@ class BusinessSerializer(serializers.ModelSerializer):
 		fields= "__all__"
 
 
-
+class StockCollectionSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = StockCollection
+		fields= "__all__"
 
 
 

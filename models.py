@@ -20,10 +20,10 @@ class User(AbstractUser):
     def __str__(self):
     	return str(self.id)+":"+str(self.username)
 
+
     class Meta:
     	ordering=('-id',)
     
-
 class Business(models.Model):
 	owners=models.ManyToManyField(User,through='Ownership')
 	business_name=models.CharField(max_length=40,)
@@ -47,13 +47,20 @@ class Ownership(models.Model):
 	def __str__(self):
 		return str(self.business.business_name)+": "+str(self.user.username)
 
+
 class Account(models.Model):
 	business=models.ForeignKey(Business,on_delete=models.CASCADE)
 	account_name=models.CharField(max_length=40,)
-	account_balance=models.FloatField(max_length=40,null=True,blank=True,default=0.0)	
+	# amount saved to this bank account for this particular business as of the current updated time
+
+	# this balance is only updated once daily after the bank confirms savings deposited 
+	
+	account_balance=models.FloatField(max_length=40,null=True,blank=True,default=0.0)
+	bank_account_name=models.CharField(max_length=40,null=True,blank=True)
+	bank_account_number=models.CharField(max_length=40,null=True,blank=True)	
 	created_at=models.DateTimeField(auto_now_add=True,null=True,blank=True)
 	updated_at=models.DateTimeField(auto_now=True,null=True,blank=True)
-
+	
 
 	def __str__(self):
 		return str(self.id)+": "+str(self.account_name)
@@ -73,6 +80,11 @@ class DebitAccountManager(models.Manager):
 		return qs
 
 # received cash
+# note the account here was initialy percived as the place where the business is going to sink money
+# though, since then the account perception has changed to a plcae where the business references its savings
+# thus better modification could be made on the db to put the business inplace of the account directly
+# though no harm is done now, but for later when perfomance is an issue, this could be a point to start with
+
 class DebitAccount(models.Model):
 	account=models.ForeignKey(Account,on_delete=models.CASCADE)
 	user=models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)
@@ -112,6 +124,10 @@ class DebitAccount(models.Model):
 
 # spentcash 
 # this is a cedit account transaction table
+# note the account here was initialy percived as the place where the business is going to source money from
+# though, since then the account perception has changed to a plcae where the business references its savings
+# thus better modification could be made on the db to put the business inplace of the account directly
+# though no harm is done now, but for later when perfomance is an issue, this could be a point to start with
 class CreditAccount(models.Model):
 	account=models.ForeignKey(Account,on_delete=models.CASCADE)
 	user=models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)
@@ -159,7 +175,7 @@ class CreditAccount(models.Model):
 	
 # note this table was added on the fly, after the schema was designed
 
-# so when you get time , revisit the schema an make sure it fits well
+# so when you get time , revisit the schema and make sure it fits well
 
 class StockCollection(models.Model):
 	# note user here is to imply the person editing the stock collection and not the owner of the business
@@ -170,3 +186,6 @@ class StockCollection(models.Model):
 	created_at=models.DateTimeField(auto_now_add=True,null=True,blank=True)
 	updated_at=models.DateTimeField(auto_now=True,null=True,blank=True)
 	
+	class Meta:
+		ordering=['-created_at']
+

@@ -10,6 +10,12 @@
 	[v-cloak]{
 		display: none;
 	}
+
+  .go3d_cool{   
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  border-radius: 10px;
+}
 </style>
 {%endblock%}
 {%block inputsearch%}
@@ -63,12 +69,12 @@
 <!-- end demo $$$$$$$$$$$$$$$$$$$$$$$$$$$$ -->
 
 
-	<h1 v-cloak>[[settings]]</h1>
-
-<div class="list-group container">
-  <div href="#" class="list-group-item list-group-item-action flex-column align-items-start " style="margin-top: 20px">
+<!-- 	<h1 v-cloak>[[settings]]</h1>
+ -->
+<div class="list-group container ">
+  <div href="#" class="list-group-item list-group-item-action flex-column align-items-start go3d_cool" style="margin-top: 20px">
     <div class="d-flex w-100 justify-content-between">
-      <h5 class="mb-1">{% trans "Business" %}</h5>
+      <h5 class="mb-1 text-primary">{% trans "Business" %}</h5>
       <small><button v-on:click="checkSubmitCompanyForm" type="submit" class="btn btn-outline-primary btn-sm" v-cloak>[[company_add_edit_button]]</button></small>
     </div>
     <p class="mb-1">
@@ -109,9 +115,9 @@
    <small class="text-muted">
     	  <ul class="list-group">
      
-   <li class="list-group-item d-flex justify-content-between lh-condensed" v-for="comp in company" v-cloak v-on:dblclick="editCompany(comp.id,comp.business_name,comp.business_location,comp.business_email,comp.business_phone,comp.business_nature)" style="overflow: auto;">
+   <li class="list-group-item d-flex justify-content-between lh-condensed go3d_cool" v-for="comp in company" v-cloak v-on:dblclick="editCompany(comp.id,comp.business_name,comp.business_location,comp.business_email,comp.business_phone,comp.business_nature)" style="overflow: auto;">
         <div class="container">
-        <h4  class="my-0" v-cloak>  [[comp.business_name]] </h4>
+        <h4  class="my-0 text-warning" v-cloak>  [[comp.business_name]] </h4>
        <small class="text-muted" v-cloak> [[parseDate(comp.created_at)]] </small>
 
       </div class="container">
@@ -144,9 +150,9 @@
   <!-- begin store -->
 
   <!-- end store -->
-  <div href="#" class="list-group-item list-group-item-action flex-column align-items-start" style="margin-top: 20px">
+  <div href="#" class="list-group-item list-group-item-action flex-column align-items-start go3d_cool" style="margin-top: 20px">
     <div class="d-flex w-100 justify-content-between">
-      <h5 class="mb-1">{% trans "Account" %}</h5>
+      <h5 class="mb-1 text-primary">{% trans "Savings Account" %}</h5>
       <small class="text-muted">
       <button type="submit" class="btn btn-outline-primary btn-sm" v-on:click="checkSubmitAccountForm">{% trans "Update" %}</button></small>
     </div>
@@ -154,9 +160,18 @@
     <form>
   <div class="form-row align-items-center">
     <div class="col-sm-3 my-1">
-      <label class="sr-only" for="inlineFormInputAccountName">{% trans "Name" %}</label>
-      <input type="text" class="form-control" id="inlineFormInputAccountName" placeholder="{% trans 'Name' %}" v-model="accountname">
+      <label class="sr-only" for="inlineFormInputAccountName">{% trans "Account Name" %}</label>
+      <input type="text" class="form-control" id="inlineFormInputAccountName" placeholder="{% trans 'Account Name' %}" v-model="accountname">
     </div>
+    <div class="col-sm-3 my-1">
+      <label class="sr-only" for="inlineFormInputAccountName">{% trans "Bank Name" %}</label>
+      <input type="text" class="form-control" id="inlineFormInputAccountName" placeholder="{% trans 'Bank Name' %}" v-model="bankaccountname">
+    </div>
+    <div class="col-sm-3 my-1">
+      <label class="sr-only" for="inlineFormInputAccountName">{% trans "Bank Account Number" %}</label>
+      <input type="text" class="form-control" id="inlineFormInputAccountName" placeholder="{% trans 'Bank Account Number' %}" v-model="bankaccountnumber">
+    </div>
+
  <!--    <div class="col-sm-3 my-1">
       <label class="sr-only" for="inlineFormInputGroupAccountBalance" >Balance</label>
       <div class="input-group">
@@ -172,15 +187,15 @@
     <small class="text-muted">
     	  <ul class="list-group">
      
-   <li class="list-group-item d-flex justify-content-between lh-condensed" v-cloak v-for="acc in account" v-on:dblclick="editAccount(acc.business,acc.id,acc.account_name,acc.account_balance)" style="overflow: auto;">
+   <li class="list-group-item d-flex justify-content-between lh-condensed go3d_cool" v-cloak v-for="acc in account" v-on:dblclick="editAccount(acc.business,acc.id,acc.account_name,acc.account_balance,acc.bank_account_name,acc.bank_account_number)" style="overflow: auto;">
         <div>
-        <h4  class="my-0" v-cloak >  [[acc.account_name]] </h4>
-<!--         <small class="text-muted" > Quantity </small>
- -->      </div>
+        <h4  class="my-0 text-warning"  v-cloak >   [[displayAccountDetails(acc.account_name,'account name').detail]]</h4>
+        <small  v-bind:class="{'text-danger':displayAccountDetails(acc.bank_account_name,'bank name').show}" > [[displayAccountDetails(acc.bank_account_name,'bank name').detail]] </small>
+      </div>
       <div>
       <h4 class="my-0" v-cloak> [[acc.account_balance]] </h4>
-<!--       <small class="text-muted"> Price </small>
- -->        
+      <small  v-bind:class="{'text-danger':displayAccountDetails(acc.bank_account_number,'Account Number').show}"> [[displayAccountDetails(acc.bank_account_number,'Account Number').detail]] </small>
+        
       </div>
       
       
@@ -191,9 +206,9 @@
   </div>
 
 <!-- begin employee -->
-   <div href="#" class="list-group-item list-group-item-action flex-column align-items-start" style="margin-top: 20px">
+   <div href="#" class="list-group-item list-group-item-action flex-column align-items-start go3d_cool" style="margin-top: 20px">
     <div class="d-flex w-100 justify-content-between">
-      <h5 class="mb-1">{% trans "Partners" %}</h5>
+      <h5 class="mb-1 text-primary">{% trans "Partners" %}</h5>
       <small class="text-muted"><button type="submit" v-bind:class="{'btn':true,'btn-sm':true,'btn-block':true,'btn-outline-primary':(addemployeebutton=='{% trans 'Add' %}'),'btn-outline-dark':(addemployeebutton!='{% trans 'Add' %}')}" v-cloak v-on:click="checkSubmitEmployeeForm">[[addemployeebutton]]</button></small>
     </div>
     <p class="mb-1">      
@@ -233,9 +248,9 @@
     <small class="text-muted container" >
         <ul class="list-group container">
      
-   <li class="list-group-item d-flex justify-content-between lh-condensed container" v-cloak v-for="employee in employees" v-on:dblclick="editEmployee(employee.id,employee.first_name,employee.privillage,employee.phonenumber,employee.username,employee.password)" style="overflow: auto;">
+   <li class="list-group-item d-flex justify-content-between lh-condensed container go3d_cool" v-cloak v-for="employee in employees" v-on:dblclick="editEmployee(employee.id,employee.first_name,employee.privillage,employee.phonenumber,employee.username,employee.password)" style="overflow: auto;">
         <div class="container">
-        <h4  class="my-0" v-cloak>  [[employee.first_name]] </h4>
+        <h4  class="my-0 text-warning" v-cloak>  [[employee.first_name]] </h4>
         <small class="text-muted" v-cloak> [[employee.phonenumber]] </small>
       </div>
       <div class="container">
@@ -245,7 +260,7 @@
       </div>
   
       <div class="container">
-      <h4 class="my-0" v-cloak>  {% trans "Available" %} </h4>
+      <h4 class="my-0 text-info" v-cloak>  {% trans "Available" %} </h4>
         <div class="custom-control custom-checkbox" v-for="comp in company"  v-if="!checkOwnerShip(employee.id,comp.id)">
     <input type="checkbox" class="custom-control-input" v-bind:id="comp.business_name" v-on:click="onChange($event,employee.id,comp.id)"  v-bind:value="comp.business_name" >
     <label class="custom-control-label" v-bind:for="comp.business_name" v-cloak>[[comp.business_name]]</label>
@@ -255,7 +270,7 @@
       
 
       <div class="container">
-      <h4 class="my-0" v-cloak>  {% trans "Allowed" %} </h4>
+      <h4 class="my-0 text-success" v-cloak>  {% trans "Allowed" %} </h4>
       
         <div class="custom-control custom-checkbox" v-for="comp in company"  v-if="checkOwnerShip(employee.id,comp.id)" v-on:click="RemoveOwnerShip(employee.id,comp.id)">
    
@@ -269,7 +284,7 @@
      <!--     <i id="trashitem" class="fa fa-unlock fa-2x pull-right" v-on:click="passwordReset(employee.id)">bar</i> -->
          
 
-         <i id="trashitem" class="fa fa-trash fa-2x center"  data-toggle="modal" data-target="#exampleModal" v-on:click="prepDelete(employee.id,employee.first_name)"></i>
+         <i id="trashitem" class="fa fa-trash fa-2x center btn-danger"  data-toggle="modal" data-target="#exampleModal" v-on:click="prepDelete(employee.id,employee.first_name)"></i>
 
       </div>
       
@@ -311,6 +326,8 @@ new Vue({
   	storephone:'',
   	storeaddress:'',
   	accountname:'',
+    bankaccountname:'',
+    bankaccountnumber:'',
   	accountbalance:'',
   	employeeusername:'',
   	employeepassword:'',
@@ -343,6 +360,18 @@ new Vue({
 
   	  },
   methods:{
+
+    displayAccountDetails:function(detail,type){
+      // if(detail==''||detail==null)
+      // status={'status':true,'detail':'Add '+type}       
+      // else status={'status':false,'detail':detail}
+      //   return status
+
+      if(detail==''||detail==null)
+        return {'detail':'Add '+type,'show':true}      
+      else 
+        return {'detail':detail,'show':false}
+    },
     parseDate:function(date){
 
     return moment(date).format('LLLL');
@@ -448,17 +477,21 @@ new Vue({
     ,
     checkSubmitAccountForm:function(e){  
         // updating editing item
-        this.$http.put('/api/account/'+this.accountid+'/',{'account_name':this.accountname,'business':this.companyid,'account_balance':this.accountbalance})
+        this.$http.put('/api/account/'+this.accountid+'/',{'account_name':this.accountname,'business':this.companyid,'account_balance':this.accountbalance,'bank_account_name':this.bankaccountname,'bank_account_number':this.bankaccountnumber})
        .then(function(response){
         // this.items=response.data
       this.title=response.data
     	this.accountname='';
     	this.accountbalance='';
+      this.bankaccountname='';
+      this.bankaccountnumber='';
     	this.getAccount();
 
        })
        .catch(function(error){
         this.title='error getting items'
+        console.error('custom name cannot be blank')
+        $.notify('Account name Cannot be blank','info');
        })
             
       e.preventDefault();
@@ -485,11 +518,13 @@ new Vue({
       this.title='error getting items'
      })
     },
-    editAccount:function(companyid,id,name,amount){
+    editAccount:function(companyid,id,name,amount,bankname,accountnumber){
     	this.companyid=companyid;
     	this.accountid=id;
     	this.accountname=name;
     	this.accountbalance=amount;    	
+      this.bankaccountname=bankname;
+      this.bankaccountnumber=accountnumber;
 
     }
     // not yet implemmented

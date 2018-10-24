@@ -106,6 +106,7 @@ body {
   padding: 10px;
   margin-right:20px; 
 border-radius: 25px;
+
 }
 .display_stock_form{
 
@@ -143,8 +144,24 @@ div.stocks_display:hover , .buttons_stock:hover{
   border-radius: 10px;
 }
 
+.slider{
+
+  /*for handling the slider for expenses and sales and*/
+}
+.slidertwo{
+  /*for handling stock slider*/
+}
+
+.column {
+    float: left;
+    width: 50%;
+
+}
+
 
 </style>
+<link href="https://cdn.jsdelivr.net/npm/animate.css@3.5.1" rel="stylesheet" type="text/css">
+
 {%endblock%}
 {%block inputsearch%}
 
@@ -194,12 +211,17 @@ div.stocks_display:hover , .buttons_stock:hover{
 
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" id="search">
-  <h1 v-cloak v-if="isGrossprofit" >{% trans "Gross Profit"%}: <br> [[ number_to_Cash(getProfiLoss()) ]]</h1>
-  <h1 v-cloak v-if="!isGrossprofit" >{% trans "Gross Loss" %}: <br>[[ number_to_Cash(getProfiLoss()) ]]</h1>
+  <h3 v-cloak v-if="isGrossprofit" >{% trans "Gross Profit"%}: <br> [[ number_to_Cash(getProfiLoss()) ]]</h3>
+  <h3 v-cloak v-if="!isGrossprofit" >{% trans "Gross Loss" %}: <br>[[ number_to_Cash(getProfiLoss()) ]]</h3>
 
-  <h1 v-cloak v-if="isNetprofit" >{% trans "Net Profit" %}:<br> [[number_to_Cash(getProfiLoss(false)) ]]</h1>
+  <h3 v-cloak v-if="isNetprofit" >{% trans "Net Profit" %}:<br> [[number_to_Cash(getProfiLoss(false)) ]]
+  <br>
+  <!-- {% trans "Saving Amount" %} <br>
+  [[number_to_Cash(getProfiLoss(false)*0.1) ]]
+  
+  </h3> -->
 
- <h1 v-cloak v-if="!isNetprofit" >{% trans "Net Loss" %}:<br> [[ number_to_Cash(getProfiLoss(false)) ]]</h1>
+ <h3 v-cloak v-if="!isNetprofit" >{% trans "Net Loss" %}:<br> [[ number_to_Cash(getProfiLoss(false)) ]]</h3>
 
     <span v-cloak class="go3d" v-if="showbusiness" v-on:click="onShowBusiness()">
     <!-- need to solve how to tranlate this js variable (vue) -->
@@ -224,10 +246,19 @@ div.stocks_display:hover , .buttons_stock:hover{
       </div>
   
 </div>
-
-<div class=" row stocks_display" v-on:click="displayStock()">
+<!-- note a combination of outer class d-flex and inner class ml-auto  position the inner lement to the right of the screen responsively-->
+<div class="row d-flex">
+  <div class="stocks_display" v-on:click="displayStock()">
   <i class="fa fa-plus fa-2x"></i>
 </div>
+<!-- <div class="stocks_display ml-auto" v-on:click="moveRight()" v-on:click="moveright = !moveright">
+ -->
+ <div class="stocks_display ml-auto" v-on:click="moveright = !moveright">
+
+  <i class="fa fa-angle-right fa-2x" style="color:blue;"></i>
+</div>
+</div>
+
 
 <div class='row' >
 
@@ -240,21 +271,202 @@ div.stocks_display:hover , .buttons_stock:hover{
       </div>
 
       <div class="row">
-        <div class="buttons_stock text-primary" style="margin-left: 10px;" v-on:click="checkSubmitStock(false)"> {% trans "closing" %}</div>
-         <div class="buttons_stock text-warning" style="margin-left: 60px;" v-on:click="checkSubmitStock(true)">{% trans "opening" %}</div>
+      <div class="buttons_stock text-warning" style="margin-left: 10px;" v-on:click="checkSubmitStock(true)">{% trans "opening" %}</div>
+        <div class="buttons_stock text-primary" style="margin-left: 60px;" v-on:click="checkSubmitStock(false)"> {% trans "closing" %}</div>
+         
 
       </div>
   </form>
 </div>
 
- <!-- begin Expenses -->
+
+<!-- animation -->
+
+
+<!--   <transition
+    name="custom-classes-transition"
+    enter-active-class="animated tada"
+    leave-active-class="animated bounceOutRight"
+  >
+  <p v-if="show"></p>
+  </transition> -->
+
+<!-- end animation -->
+
+
+<!-- test move right -->
+
+<transition
+    name="custom-classes-transition"
+    enter-active-class="animated tada"
+    leave-active-class="animated bounceOutRight"
+  >
+<p v-if="!moveright">
+ <!-- begin Savings -->
+
+<div class='col-lg-4 col-md-4 col-sm-12 col-12' style="margin-top: 20px; max-height: 800px;
+  overflow-y: auto;
+  overflow-x: auto;" >
+  
+<div  style="margin-bottom: 20px;">
+  <ul class="list-group" style="margin-bottom: 10px;">
+  <li class="list-group-item d-flex justify-content-between lh-condensed">
+      <div>
+   
+        <h4  class="" v-cloak><!-- [[customer.customer_name]] --> {% trans "Savings" %} </h4>
+        
+      </div>
+      <div>
+
+      <h4 class="text-primary align-right" v-cloak > <!--  [[customer_total_order(customer)]] -->[[number_to_Cash(getProfiLoss(false)*0.1) ]]</h4>
+        
+      </div>
+  </li>
+
+</ul> 
+<div >
+
+   <ul class="list-group" v-if="false">
+
+      <li class="list-group-item d-flex justify-content-between lh-condensed go3d_cool" v-for= "expense in expenses"    v-cloak>
+              <div>
+                  <h6  class="my-0" v-cloak>[[ number_to_Cash(getTodaysSavings())]] </h6>
+<!--                   <small class="text-muted" v-cloak> [[expense.credit_reason]] </small>
+ -->                </div>
+                <div>
+<!--                 <span v-cloak class="text-primary">Tsh [[expense.credit_amount]] </span>
+ -->
+                <br>
+                <!-- <span aria-hidden="true"  v-if="customer.id == sale.customer" v-cloak>[[customer.customer_name]]</span> -->
+                <button type="button" class="close" aria-label="Close" v-on:click="deleteExpenses(expense.id)">
+
+                <span aria-hidden="true">&times;</span>
+          </button>
+         
+                  
+                </div>
+                
+              </li>
+
+   </ul>
+
+</div>
+    
+  
+</div>
+
+</div>
+
+<!-- end Savings -->
+</p>
+</transition>
+<transition
+    name="custom-classes-transition"
+    enter-active-class="animated tada"
+    leave-active-class="animated bounceOutRight"
+  >
+ <!-- begin Stocks -->
+<p v-if="!moveright">
+
 <div class='col-lg-4 col-md-4 col-sm-12 col-12' style="margin-top: 20px; max-height: 800px;
   overflow-y: auto;
   overflow-x: auto;">
-
-
+  
 <div  style="margin-bottom: 20px;">
+  
+  <ul class="list-group" style="margin-bottom: 10px;">
+  <li class="list-group-item d-flex justify-content-between lh-condensed">
+      <div>
+   
+        <h4  class="text-warning" v-cloak><!-- [[customer.customer_name]] --> {% trans "Opening Stocks" %} </h4>
+        
+      </div>
+      <div>
 
+      <h4 class="text-primary align-right" v-cloak > <!--  [[customer_total_order(customer)]] -->{% trans "Closing Stocks" %}</h4>
+        
+      </div>
+  </li>
+
+</ul> 
+<div >
+
+  <div class="row container" style="margin-left: 2px;">
+       <ul class="list-group column">
+
+      <li class="list-group-item d-flex justify-content-between lh-condensed go3d_cool" v-for= "stock in stocks"    v-cloak v-if="stock.openingstock">
+              <div>
+                  <h6  class="my-0" v-cloak>[[parseDate(stock.created_at)]] </h6>
+                  <small class="text-warning" v-cloak> [[number_to_Cash(stock.amount)]] </small>
+                </div>
+                <div>
+                <!-- <div>
+                  <h6  class="my-0" v-cloak>[[stock.amount]] </h6>
+                  <small class="text-muted" v-cloak> [[stock.amount]] </small>
+                </div> -->
+                
+                <!-- <span aria-hidden="true"  v-if="customer.id == sale.customer" v-cloak>[[customer.customer_name]]</span> -->
+                <button type="button" class="close" aria-label="Close" v-on:click="deleteStock(stock.id)">
+
+                <span aria-hidden="true">&times;</span>
+          </button>
+         
+                  
+                </div>
+                
+              </li>
+
+   </ul>
+
+      <ul class="list-group column">
+
+      <li class="list-group-item d-flex justify-content-between lh-condensed go3d_cool" v-for= "stock in stocks"   v-if="!stock.openingstock" v-cloak>
+              <div>
+                  <h6  class="my-0" v-cloak>[[parseDate(stock.created_at)]] </h6>
+                  <small class="text-primary" v-cloak> [[number_to_Cash(stock.amount)]] </small>
+                </div>
+                <div>
+                <!-- <div>
+                  <h6  class="my-0" v-cloak>[[stock.amount]] </h6>
+                  <small class="text-muted" v-cloak> [[stock.amount]] </small>
+                </div> -->
+                
+                <!-- <span aria-hidden="true"  v-if="customer.id == sale.customer" v-cloak>[[customer.customer_name]]</span> -->
+                <button type="button" class="close" aria-label="Close" v-on:click="deleteStock(stock.id)">
+
+                <span aria-hidden="true">&times;</span>
+          </button>
+         
+                  
+                </div>
+                
+              </li>
+
+   </ul>
+  </div>
+
+
+
+</div>
+    
+  
+</div>
+
+</div>
+
+<!-- end Stocks -->
+</p>
+</transition>
+
+<!-- end test move right -->
+
+ <!-- begin Expenses -->
+
+<div class='col-lg-4 col-md-4 col-sm-12 col-12' style="margin-top: 20px; max-height: 800px;
+  overflow-y: auto;
+  overflow-x: auto;" >
+  
+<div  style="margin-bottom: 20px;">
   <ul class="list-group" style="margin-bottom: 10px;">
   <li class="list-group-item d-flex justify-content-between lh-condensed">
       <div>
@@ -305,10 +517,10 @@ div.stocks_display:hover , .buttons_stock:hover{
 
 <!-- end Expenses -->
 
-<!-- begin order -->
+<!-- begin Pending sales -->
 <div class='col-lg-4 col-md-4 col-sm-12 col-12' style="margin-top: 20px; max-height: 800px;
   overflow-y: auto;
-  overflow-x: auto;">
+  overflow-x: auto;" v-if="!moveright">
 
 <div  style="margin-bottom: 20px;">
   <ul class="list-group" style="margin-bottom: 10px;">
@@ -361,13 +573,13 @@ div.stocks_display:hover , .buttons_stock:hover{
 
 </div>
 
-<!-- end order -->
+<!-- end Pending sales -->
 
 
-<!-- begin order -->
+<!-- begin Actual sales -->
 <div class='col-lg-4 col-md-4 col-sm-12 col-12' style="margin-top: 20px; max-height: 800px;
   overflow-y: auto;
-  overflow-x: auto;">
+  overflow-x: auto;" v-if="!moveright">
 
 <div  style="margin-bottom: 20px;">
   <ul class="list-group" style="margin-bottom: 10px;">
@@ -420,7 +632,7 @@ div.stocks_display:hover , .buttons_stock:hover{
 
 </div>
 
-<!-- end order -->
+<!-- end Actual sales -->
 
 </div>
 
@@ -477,9 +689,98 @@ displaystockform:false,
 userid:'{{user.id}}',
 currentbussiness_id:'',
 current_language:'{{ LANGUAGE_CODE }}',
+show:true,
+moveright:false,
+stocks:'',
+total_closingstock:0,
+total_openingstock:0,
   },
 
   methods:{
+    deleteStock:function(id){
+      this.$http.delete('/api/stocks/'+id+'/')
+       .then(function(response){
+        this.title=response.data
+
+        this.getStocks()
+        console.log('deleted')
+       })
+       .catch(function(error){
+        this.title='error deleting expenses'
+        console.error('stock::delete failed')
+       })
+    },
+    moveRight:function(){
+      this.moveright=~this.moveright
+    },
+    getTotalStocks:function(opening=true){
+      var total_stocks=0
+      $.each(this.stocks, function(key, value) {
+        if(value.openingstock && opening)
+           total_stocks+=value.amount;
+         else if (!value.openingstock && !opening)
+          total_stocks+=value.amount;
+         });
+      return total_stocks
+    },
+    getTodaysSavings:function(){
+      var today=moment();
+      // savings=10% of net profit
+      // net profit =actual sales- (opening stock + total expenses -closing stock) 
+      // everything for tha particular day
+
+      // get total expenses for today
+
+      todays_expenses = this.expenses.filter(function(expense){
+        return moment(expense.created_at).isSame(today,'day')});
+
+        var total_expense_today=0
+      $.each(todays_expenses, function(key, value) {
+           total_expense_today+=value.credit_amount;
+         });
+
+      // get closing stock for today
+
+      todays_closing_stocks = this.stocks.filter(function(stock){
+        return moment(stock.created_at).isSame(today,'day')&& !stock.openingstock });
+      
+        var total_closing_stock_today=0
+      $.each(todays_closing_stocks, function(key, value) {
+           total_closing_stock_today+=value.amount;
+         });
+
+      // get opening stock for today
+      todays_opening_stocks = this.stocks.filter(function(stock){
+        return moment(stock.created_at).isSame(today,'day')&& stock.openingstock });
+      
+        var total_opening_stock_today=0
+      $.each(todays_opening_stocks, function(key, value) {
+           total_opening_stock_today+=value.amount;
+         });
+      // get todays actual sales
+      todays_sales = this.sales.filter(function(sale){
+        return moment(sale.created_at).isSame(today,'day') && !sale.debit_credit});
+      
+        var total_sales_today=0
+      $.each(todays_sales, function(key, value) {
+           total_sales_today+=value.debit_amount;
+         });
+
+      total_profit_today = total_sales_today - (total_opening_stock_today+total_expense_today-total_closing_stock_today)
+
+      if(total_profit_today <0)
+        return 0
+      else 
+      return total_profit_today *0.1
+    // retrun saving amount for the day, i.e 10% of the net total profit
+    },
+    getSavingsAccountBalance:function(){
+      // get the balance as per the savings already made in the savings bank account
+    },
+    getTotalSavings:function(){
+      if(this.isNetprofit)return this.getProfiLoss*0.1
+        else return 0
+    },
     displayStock:function(){
         if(this.displaystockform)this.displaystockform=false;
         else this.displaystockform=true;
@@ -496,6 +797,7 @@ current_language:'{{ LANGUAGE_CODE }}',
         this.stockamount=''
         this.getExpenses()
       this.getSales()
+      this.getStocks()
       console.log('sucess')
 
        })
@@ -516,6 +818,15 @@ current_language:'{{ LANGUAGE_CODE }}',
       this.currentbussiness_id=businessid
       this.getExpenses()
       this.getSales()
+      this.getStocks()
+    },
+    filterStocks:function(stocks){
+      userbusiness=this.currentbussiness_id
+      newstocks = stocks.filter(function(stock){
+        return stock.business==userbusiness
+        
+      })
+      return newstocks
     },
     filterBusiness:function(expenses){
       useraccount=this.useraccount
@@ -544,20 +855,45 @@ current_language:'{{ LANGUAGE_CODE }}',
      })
     },
     getProfiLoss:function(gross=true){
-       this.totalsales=this.credit_sales+this.actual_sales
+      // remember to add opening and closing stock for the day so as to validate this calculations
+      var total_expense =this.total_expenses
+      this.total_closingstock=this.getTotalStocks(false)
+
+      this.total_openingstock=this.getTotalStocks(true)
+
+       this.totalsales=this.credit_sales+this.actual_sales 
+
+       // equation is
+       // total_sales-(total_opening_stocks -(total_expenses + total_closing_stocks))
+
+       // totalexpenses + total_closing_stock is just total expenses
+
+       // thus
+
+       total_expense=this.total_expenses+this.total_closingstock
+
+       // cost of sale is the sum of the expenses and closing stock subtracted from the opening stock : total_opening_stocks -(total_expenses + total_closing_stocks)
+
+       // thus from here downwards on this function, total expense is actually the cost of sale
+
+       // i think making the cost of sale an absolute value makes more sense , since any negative value for cost of sale will give us so mighty 
+
+       total_expense=Math.abs(this.total_openingstock-total_expense)
+
       
       // profit /loss with sales on loan
-      if(this.totalsales>=this.total_expenses)this.isGrossprofit=true
-      else if(this.totalsales<this.total_expenses)this.isGrossprofit=false
+      if(this.totalsales>=total_expense)this.isGrossprofit=true
+      else if(this.totalsales<total_expense)this.isGrossprofit=false
      
      // profit/loss with sale without loans
-      if(this.actual_sales>=this.total_expenses)this.isNetprofit=true
-      else if(this.actual_sales<this.total_expenses)this.isNetprofit=false
+      if(this.actual_sales>=total_expense)this.isNetprofit=true
+      else if(this.actual_sales<total_expense)this.isNetprofit=false
 
-      if(gross && this.isGrossprofit )return this.totalsales-this.total_expenses
-      else if(gross && !this.isGrossprofit )return this.total_expenses-this.totalsales
-      else if(!gross && this.isNetprofit )return this.actual_sales-this.total_expenses
-      else if(!gross && !this.isNetprofit )return this.total_expenses-this.actual_sales
+
+      if(gross && this.isGrossprofit )return this.totalsales-total_expense
+      else if(gross && !this.isGrossprofit )return total_expense-this.totalsales
+      else if(!gross && this.isNetprofit )return this.actual_sales-total_expense
+      else if(!gross && !this.isNetprofit )return total_expense-this.actual_sales
 
 
     },
@@ -620,9 +956,28 @@ current_language:'{{ LANGUAGE_CODE }}',
      })
 
     },
-    parseDate:function(date){
+    getStocks:function(){
+      this.$http.get('/api/stocks')
+     .then(function(response){
+      this.stocks=response.data
 
-    return moment(date).format('LLLL');
+      if(this.selected_business!=this.matchLanguage("All"))
+      this.stocks=this.filterStocks(this.stocks)
+
+     
+     })
+     .catch(function(error){
+      this.title='error getting items'
+     })
+
+    },
+    parseDate:function(date){
+        var today=moment();
+
+    if(moment(date).isSame(today,'day'))
+      return 'Today';
+      else
+    return moment(date).format('LL');
 
     },
     number_to_Cash:function(number,currency="Tsh"){
@@ -740,6 +1095,7 @@ current_language:'{{ LANGUAGE_CODE }}',
     this.getAccount()
     this.getExpenses()
     this.getBusiness()
+    this.getStocks()
 
     }
   }

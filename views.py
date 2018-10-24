@@ -144,6 +144,7 @@ def getUser(request,*args,**kargs):
 @csrf_exempt
 @login_required(login_url='/login/')
 def getMyUsers(request,*args,**kargs):
+	# qs=User.objects.filter(Q(created_by=request.user) | Q(id=request.user))	
 	qs=User.objects.filter(created_by=request.user)
 	serializer=UserSerializer(qs,many=True)
 	return JsonResponse(serializer.data,safe=False)

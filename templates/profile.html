@@ -12,10 +12,29 @@
   .go3d{  min-width:100px; 
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   text-align: center;
-  padding: 10px;}
-
+  padding: 10px;
 
 }
+
+
+.go3d_cool{   
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.fa{
+  display: none;
+}
+
+li:hover .fa-edit{
+  display: block;
+  color:green;
+}
+
+
+
+
 </style>
 
 {%endblock%}
@@ -29,7 +48,7 @@
       <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="{% trans 'Search' %}" aria-label="Search">
       <ul class="navbar-nav px-3 col-2">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="#" ><i class="fa fa-search" aria-hidden="true" style="color:black;"></i></a>
+          <a class="nav-link" href="#" ><i class="fa fa-search " aria-hidden="true" style="color:black;"></i></a>
         </li>
       </ul>
     </nav>
@@ -46,29 +65,33 @@
 	<div class="col-lg-8 col-md-8 col-sm-12 col-12" style="margin-right: 20px;">
 
   <ul class="list-group" >
-     <div class="row">
-   <li style="" class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('firstname')">
+     <div class="row ">
+   <li style="" class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6 go3d_cool" v-on:dblclick="enableEdit('firstname')">
         <div>
         <h4  class="my-0" >  {% trans "First Name" %}  </h4>
-        <small class="text-muted" v-cloak v-if="!editfirstname">  [[user.first_name]]</small>
+        <small class=" text-primary" v-cloak v-if="!editfirstname">  [[user.first_name]]</small>
          <small class="text-muted" v-if="editfirstname"><input type="text" name="" v-model="firstname" class="form-control">  </small>
       </div>
       <div>
       <h4 class="my-0" v-cloak v-if="editfirstname"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,firstname,user.last_name,user.phonenumber,user.email,user.username,user.gender,user.birth_date,user.password,'firstname')">{% trans "update" %} </button> </h4>
-     
+     <br>
+     <i class="fa fa-edit" v-on:click="enableEdit('firstname')"></i>
         
       </div>
       
   </li>
 
-           <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('lastname')">
+           <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6 go3d_cool" v-on:dblclick="enableEdit('lastname')">
         <div>
         <h4  class="my-0" > {% trans "Last Name" %}  </h4>
-        <small class="text-muted" v-cloak v-if="!editlastname"> [[user.last_name]] </small>
+
+        <small class="text-primary" v-cloak v-if="!editlastname"> [[user.last_name]] </small>
         <small class="text-muted" v-if="editlastname"><input type="text" name="" class="form-control" v-model="lastname">  </small>
       </div>
       <div>
       <h4 class="my-0" v-cloak v-if="editlastname"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,lastname,user.phonenumber,user.email,user.username,user.gender,user.birth_date,user.password,'lastname')">{% trans "update" %} </button> </h4>
+      <br>
+      <i class="fa fa-edit" v-on:click="enableEdit('lastname')"></i>
         
       </div>
       
@@ -79,29 +102,31 @@
      </div>
 
 <!-- row 2 -->
-          <div class="row" style="margin-top: 20px;">
-             <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('birthdate')">
+          <div class="row " style="margin-top: 20px;">
+             <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6 go3d_cool" v-on:dblclick="enableEdit('birthdate')">
         <div>
         <h4  class="my-0" > {% trans "Birthdate" %}  </h4>
-        <small class="text-muted" v-cloak v-if="!editbirthdate"> [[user.birth_date]] </small>
+        <small class="text-primary" v-cloak v-if="!editbirthdate"> [[user.birth_date]] </small>
         <small class="text-muted" v-if="editbirthdate"><input type="date" name="" class="form-control" v-model="birthdate">  </small>
       </div>
       <div>
       <h4 class="my-0" v-cloak v-if="editbirthdate"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,user.last_name,user.phonenumber,user.email,user.username,user.gender,birthdate,user.password,'birthdate')">{% trans "update" %}</button> </h4>
-        
+        <br>
+        <i class="fa fa-edit" v-on:click="enableEdit('birthdate')"></i>
       </div>
       
       
   </li>
-   <li style="" class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('phone')">
+   <li style="" class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6 go3d_cool" v-on:dblclick="enableEdit('phone')">
         <div>
         <h4  class="my-0" >  {% trans "Phone" %} </h4>
-        <small class="text-muted" v-cloak v-if="!editphone"> [[user.phonenumber]] </small>
+        <small class="text-primary" v-cloak v-if="!editphone"> [[user.phonenumber]] </small>
         <small class="text-muted" v-if="editphone"><input type="text" name="" class="form-control" v-model="phone">  </small>
       </div>
       <div>
       <h4 class="my-0" v-cloak v-if="editphone"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,user.last_name,phone,user.email,user.username,user.gender,user.birth_date,user.password,'phone')">{% trans "update" %}</button> </h4>
-        
+        <br>
+        <i class="fa fa-edit" v-on:click="enableEdit('phone')"></i>
       </div>
       
       
@@ -109,29 +134,31 @@
      	
      </div>
 <!-- row -->
-               <div class="row" style="margin-top: 20px;">
-     	   <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('email')">
+               <div class="row " style="margin-top: 20px;">
+     	   <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6 go3d_cool" v-on:dblclick="enableEdit('email')">
         <div>
         <h4  class="my-0" >  {% trans "Email" %} </h4>
-        <small class="text-muted" v-cloak v-if="!editemial"> [[user.email]] </small>
+        <small class="text-primary" v-cloak v-if="!editemial"> [[user.email]] </small>
         <small class="text-muted" v-if="editemial"><input type="text" name="" class="form-control" v-model="email">  </small>
       </div>
       <div>
       <h4 class="my-0" v-cloak v-if="editemial"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,user.last_name,user.phonenumber,email,user.username,user.gender,user.birth_date,user.password,'email')">{% trans "update" %}</button> </h4>
-        
+        <br>
+        <i class="fa fa-edit" v-on:click="enableEdit('email')"></i>
       </div>
       
       
   </li>
-   <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6" v-on:dblclick="enableEdit('gender')">
+   <li class="list-group-item d-flex justify-content-between lh-condensed col-12 col-sm-12 col-md-12 col-lg-6 go3d_cool" v-on:dblclick="enableEdit('gender')">
         <div>
         <h4  class="my-0" >  {% trans "Gender" %} </h4>
-        <small class="text-muted" v-cloak v-if="!editgender"> [[user.gender]] </small>
+        <small class="text-primary" v-cloak v-if="!editgender"> [[user.gender]] </small>
         <small class="text-muted" v-if="editgender"><input type="text" name="" class="form-control" v-model="gender">  </small>
       </div>
       <div>
       <h4 class="my-0" v-cloak v-if="editgender"> <button class="btn btn-outline-secondary" type="button" v-on:click="updateUser(user.id,user.first_name,user.last_name,user.phonenumber,user.email,user.username,gender,user.birth_date,user.password,'gender')">{% trans "update" %}</button> </h4>
-        
+       <br>
+        <i class="fa fa-edit" v-on:click="enableEdit('gender')"></i>
       </div>
       
       
@@ -165,15 +192,15 @@
   
 </div>	
 <div class="col-lg-3 col-md-3 col-sm-12 col-12"  v-on:dblclick="closeEditInput()">
-<div class="list-group" >
-  <div  class="list-group-item list-group-item-action flex-column align-items-start ">
+<div class="list-group " >
+  <div  class="list-group-item list-group-item-action flex-column align-items-start go3d_cool">
     <div class="d-flex w-100 justify-content-between">
       <h5 class="mb-1"></h5>
       <small v-cloak>[[user.username]]</small>
     </div>
     <p class="mb-1" >{% trans "Username" %}  </p>
 <!--     <p class="text-danger" v-cloak>[[error]]</p>
- -->    <small v-on:click="change('username')" v-if="!editusername">{% trans "change" %}</small>
+ -->    <small class="text-warning" v-on:click="change('username')" v-if="!editusername">{% trans "change" %}</small>
   
 
 
@@ -186,7 +213,7 @@
 <br><br>
     <p class="mb-1" >{% trans "Password" %}</p>
 <!--     <p class="text-danger" v-cloak>[[passerror]]</p>
- -->    <small v-on:click="change('password')" v-if="!editpassword">{% trans "change" %}</small>
+ -->    <small class="text-warning" v-on:click="change('password')" v-if="!editpassword">{% trans "change" %}</small>
     <!-- old password -->
    	<div class="input-group input-group-sm mb-3" >
   <div class="input-group-prepend" v-if="editpassword">

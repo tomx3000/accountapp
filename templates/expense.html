@@ -155,7 +155,7 @@ border-radius: 10px;
     
    <nav class="navbar navbar-white fixed-top bg-white flex-md-nowrap p-0 shadow">
       <a class="navbar col-2  mr-0" href="#"> {{user.username}}</a>
-      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="{% trans 'Search' %}" aria-label="Search">
+      <input class="col-8 form-control form-control-dark w-100" type="text" placeholder="{% trans 'Search' %}h3" aria-label="Search">
       <ul class="navbar-nav px-3 col-2">
         <li class="nav-item text-nowrap">
           <a class="nav-link" href="#" ><i class="fa fa-search" aria-hidden="true" style="color:black;"></i></a>
@@ -170,7 +170,7 @@ border-radius: 10px;
 {%block content%}
 <div id='creditapp'>
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" id="search">
-	<h1 v-cloak > {% trans "Total" %}: [[number_to_cash(getTotalCredit().total_amount)]] </h1>
+	<h3 v-cloak > {% trans "Total" %}: [[number_to_cash(getTotalCredit().total_amount)]] </h3>
 <span v-cloak class="go3d" v-if="showbusiness" v-on:click="onShowBusiness()">[[selected_business]]</span>
 
 <div class="dropdown pull-right selectbuz" v-if="!showbusiness">
@@ -832,7 +832,7 @@ current_language:'{{ LANGUAGE_CODE }}',
 })
 
   </script>
-  <script type="text/javascript">
+<!--   <script type="text/javascript">
     window.onload=function(){
       // JBIC
       // daily_select=document.getElementById("duration_daily");
@@ -843,5 +843,5 @@ current_language:'{{ LANGUAGE_CODE }}',
 
 
     };
-  </script>
+  </script> -->
 {%endblock%}
